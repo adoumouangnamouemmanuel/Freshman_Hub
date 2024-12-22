@@ -26,17 +26,6 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <BlurView intensity={50} style={styles.container}>
-      <View style={styles.topBar}>
-        {/* <Text style={styles.time}>{format(new Date(), "HH:mm")}</Text> */}
-        {/* <View style={styles.statusIcons}>
-          <Ionicons name="wifi" size={16} color="#000" />
-          <Ionicons name="cellular" size={16} color="#000" />
-          <View style={styles.batteryContainer}>
-            <Ionicons name="battery-full" size={16} color="#000" />
-            <Text style={styles.batteryText}>52%</Text>
-          </View>
-        </View> */}
-      </View>
 
       <View style={styles.mainHeader}>
         <View>

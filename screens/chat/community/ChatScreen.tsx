@@ -13,6 +13,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import ChatListItem from "@/components/chat/ChatListItem";
 import CommunityChat from "@/components/chat/CommunityChat";
+import { router } from "expo-router";
 
 const ChatScreen = () => {
   const [index, setIndex] = useState(0);
@@ -62,7 +63,11 @@ const ChatScreen = () => {
           />
         );
       case "community":
-        return <CommunityChat />;
+        return (
+          <CommunityChat
+            onChatPress={(id) => router.push(`/chat/community?id=${id}` as any)}
+          />
+        );
       default:
         return null;
     }
@@ -83,11 +88,11 @@ const ChatScreen = () => {
         barStyle={styles.bottomNavigation}
       />
       <Portal>
-        <FAB
+        {/* <FAB
           style={styles.fab}
           icon="plus"
           onPress={() => setNewChatModalVisible(true)}
-        />
+        /> */}
         <Modal
           visible={isNewChatModalVisible}
           onDismiss={() => setNewChatModalVisible(false)}
@@ -130,12 +135,13 @@ const styles = StyleSheet.create({
   bottomNavigation: {
     backgroundColor: "#ffffff",
   },
-  fab: {
-    position: "absolute",
-    margin: 16,
-    right: 0,
-    bottom: 70,
-  },
+  // fab: {
+  //   position: "absolute",
+  //   display: "none",
+  //   margin: 16,
+  //   right: 0,
+  //   bottom: 70,
+  // },
   modalContent: {
     backgroundColor: "white",
     padding: 20,

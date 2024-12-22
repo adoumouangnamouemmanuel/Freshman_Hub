@@ -61,7 +61,7 @@ const ChatScreen = () => {
       case "community":
         return (
           <CommunityChat
-            onChatPress={(id) => router.push(`/chat/community?id=${id}`)}
+            onChatPress={(id) => router.push(`/chat/community?id=${id}` as any)}
           />
         );
       default:
@@ -112,7 +112,7 @@ const ChatScreen = () => {
               left={() => <List.Icon icon="account-group" />}
               onPress={() => {
                 setNewChatModalVisible(false);
-                router.push("/chat/community?new=true");
+                router.push("/chat/community?new=true" as any);
               }}
             />
           </List.Section>
@@ -137,8 +137,8 @@ const styles = StyleSheet.create({
   fab: {
     position: "absolute",
     margin: 16,
-    right: 0,
-    bottom: 70,
+    right: 100,
+    top: 35,
   },
   modalContent: {
     backgroundColor: "white",

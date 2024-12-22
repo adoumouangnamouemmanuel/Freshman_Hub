@@ -16,6 +16,8 @@ import ActivityFeed from "@/components/home/ActivityFeed";
 import SupportSection from "@/components/home/SupportSection";
 import InspirationCard from "@/components/home/InspirationCard";
 import StudentJourney from "@/components/home/StudentJourney";
+import ProfileScreen from "../profile/profileScreen";
+import { router } from "expo-router";
 
 export default function HomeScreen() {
   const [temperature] = useState(25);
@@ -127,7 +129,7 @@ export default function HomeScreen() {
       <Header
         temperature={temperature}
         profileImage="https://picsum.photos/100"
-        onProfilePress={() => console.log("Profile pressed")}
+        onProfilePress={() => router.push("/profile")}
       />
 
       <ScrollView
