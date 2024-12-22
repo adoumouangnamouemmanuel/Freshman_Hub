@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import { useRouter } from "expo-router";
 import {
   BottomNavigation,
-  Appbar,
-  Searchbar,
   FAB,
   Portal,
   Modal,
   List,
+  Avatar,
+  Searchbar,
+  IconButton,
 } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
 import ChatListItem from "@/components/chat/ChatListItem";
 import CommunityChat from "@/components/chat/CommunityChat";
 
@@ -18,7 +18,7 @@ const ChatScreen = () => {
   const [index, setIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [isNewChatModalVisible, setNewChatModalVisible] = useState(false);
-  const router = useRouter();
+  const navigation = useNavigation();
 
   const [routes] = useState([
     { key: "private", title: "Private", icon: "chat" },
@@ -52,28 +52,24 @@ const ChatScreen = () => {
                 name={item.name}
                 avatar={item.avatar}
                 lastMessage={item.lastMessage}
-                onPress={() => router.push(`/chat/private?id=${item.id}`)}
+                onPress={() =>
+                  // navigation.navigate("PrivateChat", { chatId: item.id })
+                  null
+                }
               />
             )}
             keyExtractor={(item) => item.id}
           />
         );
       case "community":
-        return (
-          <CommunityChat
-            onChatPress={(id) => router.push(`/chat/community?id=${id}`)}
-          />
-        );
+        return <CommunityChat />;
       default:
         return null;
     }
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
-      <Appbar.Header>
-        <Appbar.Content title="Chats" />
-      </Appbar.Header>
+    <View style={styles.container}>
       <Searchbar
         placeholder="Search chats"
         onChangeText={setSearchQuery}
@@ -104,7 +100,7 @@ const ChatScreen = () => {
               left={() => <List.Icon icon="chat" />}
               onPress={() => {
                 setNewChatModalVisible(false);
-                router.push("/chat/private?new=true");
+                // navigation.navigate("NewPrivateChat");
               }}
             />
             <List.Item
@@ -112,13 +108,13 @@ const ChatScreen = () => {
               left={() => <List.Icon icon="account-group" />}
               onPress={() => {
                 setNewChatModalVisible(false);
-                router.push("/chat/community?new=true");
+                // navigation.navigate("JoinCommunityChat");
               }}
             />
           </List.Section>
         </Modal>
       </Portal>
-    </SafeAreaView>
+    </View>
   );
 };
 

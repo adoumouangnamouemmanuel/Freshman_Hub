@@ -1,10 +1,10 @@
 import React from "react";
-import { View, Text } from "react-native";
 
 import MapScreen from "@/screens/map/mapScreen";
+import CoachingScreen from "@/screens/coaching/CoachingScreen";
 
 const index = () => {
-  return <MapScreen />;
+  return <CoachingScreen />;
 };
 
 export default index;
