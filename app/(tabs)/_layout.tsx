@@ -55,12 +55,14 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="explore"
+        name="chat/index"
         options={{
-          title: "Post",
+          title: "Chat",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "add-circle" : "add-circle-outline"}
+              name={
+                focused ? "chatbubble-ellipses" : "chatbubble-ellipses-outline"
+              }
               color={color}
             />
           ),
@@ -80,7 +82,7 @@ export default function TabLayout() {
         }}
       /> */}
 
-      {/* <Tabs.Screen
+      <Tabs.Screen
         name="profile/index"
         options={{
           title: "Profile",
@@ -91,7 +93,7 @@ export default function TabLayout() {
             />
           ),
         }}
-      /> */}
+      />
     </Tabs>
   );
 }
