@@ -18,45 +18,24 @@ interface ActivityFeedProps {
 }
 
 const ActivityFeed: React.FC<ActivityFeedProps> = ({ activities }) => {
-  const renderActivity = ({
-    item,
-    index,
-  }: {
-    item: Activity;
-    index: number;
-  }) => (
-    <Animated.View
-      entering={FadeInUp.delay(index * 100).springify()}
-      style={styles.activityContainer}
-    >
-      <View style={[styles.iconContainer, { backgroundColor: item.color }]}>
-        <Ionicons name={item.icon as any} size={24} color="#FFF" />
-      </View>
-      <View style={styles.activityContent}>
-        <Text style={styles.activityTitle}>{item.title}</Text>
-        <Text style={styles.activityDescription}>{item.description}</Text>
-        <Text style={styles.activityTime}>{item.time}</Text>
-      </View>
-    </Animated.View>
-  );
-
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Recent Activity</Text>
-        <View style={styles.filterContainer}>
-          <Text style={styles.filterText}>All</Text>
-          <Ionicons name="chevron-down" size={20} color="#666" />
-        </View>
-      </View>
-
-      <FlatList
-        data={activities}
-        renderItem={renderActivity}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-      />
+      {activities.map((item, index) => (
+        <Animated.View
+          key={item.id}
+          entering={FadeInUp.delay(index * 100).springify()}
+          style={styles.activityContainer}
+        >
+          <View style={[styles.iconContainer, { backgroundColor: item.color }]}>
+            <Ionicons name={item.icon as any} size={24} color="#FFF" />
+          </View>
+          <View style={styles.activityContent}>
+            <Text style={styles.activityTitle}>{item.title}</Text>
+            <Text style={styles.activityDescription}>{item.description}</Text>
+            <Text style={styles.activityTime}>{item.time}</Text>
+          </View>
+        </Animated.View>
+      ))}
     </View>
   );
 };
