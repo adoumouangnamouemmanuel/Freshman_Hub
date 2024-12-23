@@ -1,29 +1,21 @@
 import React, { useState } from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { Appbar, Searchbar } from "react-native-paper";
 import { useRouter } from "expo-router";
-import {
-  BottomNavigation,
-  Appbar,
-  Searchbar,
-  FAB,
-  Portal,
-  Modal,
-  List,
-} from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ChatListItem from "@/components/chat/ChatListItem";
 import CommunityChat from "@/components/chat/CommunityChat";
+import CustomBottomNavigation from "@/components/CustomBottomNavigation";
 
 const ChatScreen = () => {
   const [index, setIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isNewChatModalVisible, setNewChatModalVisible] = useState(false);
   const router = useRouter();
 
-  const [routes] = useState([
-    { key: "private", title: "Private", icon: "chat" },
-    { key: "community", title: "Community", icon: "account-group" },
-  ]);
+  const routes = [
+    { key: "private", title: "Private", icon: "chatbubbles-outline" },
+    { key: "community", title: "Community", icon: "people-outline" },
+  ];
 
   const privateChats = [
     {
@@ -41,27 +33,26 @@ const ChatScreen = () => {
     // Add more mock data as needed
   ];
 
-  const renderScene = ({ route }: { route: { key: string } }) => {
-    switch (route.key) {
+  const renderScene = () => {
+    switch (routes[index].key) {
       case "private":
         return (
-          <FlatList
-            data={privateChats}
-            renderItem={({ item }) => (
+          <View>
+            {privateChats.map((chat) => (
               <ChatListItem
-                name={item.name}
-                avatar={item.avatar}
-                lastMessage={item.lastMessage}
-                onPress={() => router.push(`/chat/private?id=${item.id}`)}
+                key={chat.id}
+                name={chat.name}
+                avatar={chat.avatar}
+                lastMessage={chat.lastMessage}
+                onPress={() => router.push(`/chat/private?id=${chat.id}`)}
               />
-            )}
-            keyExtractor={(item) => item.id}
-          />
+            ))}
+          </View>
         );
       case "community":
         return (
           <CommunityChat
-            onChatPress={(id) => router.push(`/chat/community?id=${id}` as any)}
+            onChatPress={(id) => router.push(`/chat/community?id=${id}`)}
           />
         );
       default:
@@ -80,44 +71,17 @@ const ChatScreen = () => {
         value={searchQuery}
         style={styles.searchBar}
       />
-      <BottomNavigation
-        navigationState={{ index, routes }}
-        onIndexChange={setIndex}
-        renderScene={renderScene}
-        barStyle={styles.bottomNavigation}
+      <View style={styles.content}>{renderScene()}</View>
+      <CustomBottomNavigation
+        state={{ index, routes }}
+        navigation={{
+          emit: (event: { type: string; target?: string }) => ({ defaultPrevented: false }),
+          navigate: (name: string) => {
+            const routeIndex = routes.findIndex((route) => route.key === name);
+            setIndex(routeIndex);
+          },
+        }}
       />
-      <Portal>
-        <FAB
-          style={styles.fab}
-          icon="plus"
-          onPress={() => setNewChatModalVisible(true)}
-        />
-        <Modal
-          visible={isNewChatModalVisible}
-          onDismiss={() => setNewChatModalVisible(false)}
-          contentContainerStyle={styles.modalContent}
-        >
-          <List.Section>
-            <List.Subheader>Start a new chat</List.Subheader>
-            <List.Item
-              title="New private chat"
-              left={() => <List.Icon icon="chat" />}
-              onPress={() => {
-                setNewChatModalVisible(false);
-                router.push("/chat/private?new=true");
-              }}
-            />
-            <List.Item
-              title="Join community chat"
-              left={() => <List.Icon icon="account-group" />}
-              onPress={() => {
-                setNewChatModalVisible(false);
-                router.push("/chat/community?new=true" as any);
-              }}
-            />
-          </List.Section>
-        </Modal>
-      </Portal>
     </SafeAreaView>
   );
 };
@@ -131,20 +95,8 @@ const styles = StyleSheet.create({
     margin: 16,
     elevation: 4,
   },
-  bottomNavigation: {
-    backgroundColor: "#ffffff",
-  },
-  fab: {
-    position: "absolute",
-    margin: 16,
-    right: 100,
-    top: 35,
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: 20,
-    margin: 20,
-    borderRadius: 8,
+  content: {
+    flex: 1,
   },
 });
 

@@ -44,7 +44,7 @@ const CommunityChat: React.FC<CommunityChatProps> = ({ onChatPress }) => {
               {item.participants} members
             </Text>
           )}
-          onPress={() => onChatPress(item.id)}
+          onPress={() => onChatPress(`/chat/community?id=${item.id}`)}
           style={styles.item}
         />
       )}
