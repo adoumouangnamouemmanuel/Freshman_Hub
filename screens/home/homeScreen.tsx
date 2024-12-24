@@ -16,7 +16,6 @@ import ActivityFeed from "@/components/home/ActivityFeed";
 import SupportSection from "@/components/home/SupportSection";
 import InspirationCard from "@/components/home/InspirationCard";
 import StudentJourney from "@/components/home/StudentJourney";
-import ProfileScreen from "../profile/profileScreen";
 import { router } from "expo-router";
 
 export default function HomeScreen() {

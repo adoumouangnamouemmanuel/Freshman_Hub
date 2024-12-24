@@ -1,20 +1,45 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { Text } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import Animated, { FadeInUp } from "react-native-reanimated";
+import { useRouter } from "expo-router";
 
 const SupportSection: React.FC = () => {
+  const router = useRouter();
+
   type SupportOption = {
     icon: "school" | "people" | "map" | "help-circle";
     title: string;
     color: string;
+    route: string;
   };
 
   const supportOptions: SupportOption[] = [
-    { icon: "school", title: "Academic Coaching", color: "#8B5CF6" },
-    { icon: "people", title: "Buddy System", color: "#EC4899" },
-    { icon: "map", title: "Campus Navigation", color: "#10B981" },
-    { icon: "help-circle", title: "Help Center", color: "#F59E0B" },
+    {
+      icon: "school",
+      title: "Academic Coaching",
+      color: "#8B5CF6",
+      route: "(routes)/coaching",
+    },
+    {
+      icon: "people",
+      title: "Buddy System",
+      color: "#EC4899",
+      route: "(routes)/buddies",
+    },
+    {
+      icon: "map",
+      title: "Campus Navigation",
+      color: "#10B981",
+      route: "/navigation",
+    },
+    {
+      icon: "help-circle",
+      title: "Help Center",
+      color: "#F59E0B",
+      route: "(routes)/help",
+    },
   ];
 
   return (
@@ -25,7 +50,11 @@ const SupportSection: React.FC = () => {
       <Text style={styles.title}>Support & Resources</Text>
       <View style={styles.optionsContainer}>
         {supportOptions.map((option, index) => (
-          <TouchableOpacity key={index} style={styles.option}>
+          <TouchableOpacity
+            key={index}
+            style={styles.option}
+            onPress={() => router.push(option.route as any)}
+          >
             <View
               style={[styles.iconContainer, { backgroundColor: option.color }]}
             >

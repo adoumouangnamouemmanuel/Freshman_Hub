@@ -1,7 +1,6 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-// import { format } from "date-fns";
 import { BlurView } from "expo-blur";
 import Animated, {
   FadeIn,
@@ -26,7 +25,6 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <BlurView intensity={50} style={styles.container}>
-
       <View style={styles.mainHeader}>
         <View>
           <Animated.Text
