@@ -77,6 +77,7 @@ export default function FAQScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 16,
     flex: 1,
     backgroundColor: "#F3F4F6",
   },

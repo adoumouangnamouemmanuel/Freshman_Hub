@@ -4,6 +4,7 @@ import { Card, Title, Paragraph, Button, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { Linking } from "react-native";
 
 interface Service {
   title: string;
@@ -23,6 +24,18 @@ const CategoryTemplate: React.FC<CategoryTemplateProps> = ({
   services,
 }) => {
   const router = useRouter();
+  const contact = {
+    phone: "+233 302 610 330",
+    email: "emmanuel.adoum@ashesi.edu.gh",
+  };
+
+  const handleCall = (phoneNumber: string) => {
+      Linking.openURL(`tel:${phoneNumber}`);
+    };
+  
+    const handleEmail = (email: string) => {
+      Linking.openURL(`mailto:${email}`);
+    };
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
@@ -40,7 +53,11 @@ const CategoryTemplate: React.FC<CategoryTemplateProps> = ({
           <Card key={index} style={styles.serviceCard}>
             <Card.Content>
               <View style={styles.serviceHeader}>
-                <Ionicons name={service.icon as any} size={24} color="#4CAF50" />
+                <Ionicons
+                  name={service.icon as any}
+                  size={24}
+                  color="#4CAF50"
+                />
                 <Title style={styles.serviceTitle}>{service.title}</Title>
               </View>
               <Paragraph>{service.description}</Paragraph>
@@ -65,20 +82,10 @@ const CategoryTemplate: React.FC<CategoryTemplateProps> = ({
             </Paragraph>
           </Card.Content>
           <Card.Actions>
-            <Button
-              icon="email"
-              onPress={() => {
-                /* Implement email action */
-              }}
-            >
+            <Button icon="email" onPress={() => handleEmail(contact.email)}>
               Email Support
             </Button>
-            <Button
-              icon="phone"
-              onPress={() => {
-                /* Implement call action */
-              }}
-            >
+            <Button icon="phone" onPress={() => handleCall(contact.phone)}>
               Call Support
             </Button>
           </Card.Actions>

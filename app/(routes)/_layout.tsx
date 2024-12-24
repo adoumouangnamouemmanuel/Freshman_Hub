@@ -9,7 +9,7 @@ export default function SupportCenterLayout() {
       >
       <Stack.Screen name="coaching/index" options={{ headerShown: false }} />
           <Stack.Screen name="buddies/index" options={{ headerShown: false }} />
-          <Stack.Screen name="campus-navigation/index" options={{ headerShown: false }} />
+          <Stack.Screen name="campusNavigation/index" options={{ headerShown: false }} />
       <Stack.Screen name="help" options={{ headerShown: false }} />
     </Stack>
   );

@@ -32,7 +32,7 @@ const SupportSection: React.FC = () => {
       icon: "map",
       title: "Campus Navigation",
       color: "#10B981",
-      route: "/navigation",
+      route: "(routes)/campusNavigation",
     },
     {
       icon: "help-circle",

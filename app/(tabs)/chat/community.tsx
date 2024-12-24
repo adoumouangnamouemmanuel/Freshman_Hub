@@ -57,7 +57,7 @@ const CommunityChat = () => {
     <SafeAreaView style={styles.container} edges={["top"]}>
       <Appbar.Header>
         <Appbar.BackAction onPress={() => router.back()} />
-        <Appbar.Content title={`Community Chat ${id}`} />
+        <Appbar.Content title="Freshman General" />
       </Appbar.Header>
       <FlatList
         data={messages}
