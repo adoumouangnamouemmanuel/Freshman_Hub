@@ -1,70 +1,87 @@
+import React, { useEffect } from "react";
+import { View } from "react-native";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
 import { Provider as PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { useAuth } from "@/hooks/useAuth";
+import { AuthProvider, useAuthContext } from "@/components/auth/authProvider";
+import { AuthStatus } from "@/components/auth/AuthStatus";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
+function RootLayoutNav() {
+  const { user, isLoading } = useAuthContext();
+  const segments = useSegments();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    const inAuthGroup = segments[0] === "(auth)";
+
+    if (!user && !inAuthGroup) {
+      router.replace("/(auth)/login");
+    } else if (user && inAuthGroup) {
+      if (user.role === "admin") {
+        router.replace("/(auth)/admin-choice");
+      } else {
+        router.replace("/(tabs)");
+      }
+    }
+  }, [user, isLoading, segments]);
+
+  if (isLoading) {
+    return null; // or a loading indicator
+  }
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="admin" options={{ headerShown: false }} />
+    </Stack>
+  );
+}
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const { user } = useAuth();
-  const [isReady, setIsReady] = useState(false);
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
   useEffect(() => {
-    async function prepare() {
-      try {
-        await SplashScreen.preventAutoHideAsync();
-        await Promise.all([]);
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        setIsReady(true);
-      }
-    }
-
-    prepare();
-  }, []);
-
-  useEffect(() => {
-    if (loaded && isReady) {
+    if (loaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, isReady]);
+  }, [loaded]);
 
-  if (!isReady || !loaded) {
+  if (!loaded) {
     return null;
   }
 
   return (
-    <PaperProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="(routes)" />
-          {user?.role === "ADMIN" && (
-            <Stack.Screen
-              name="admin"
-              options={{ headerShown: true, title: "Admin Panel" }}
-            />
-          )}
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
-    </PaperProvider>
+    <AuthProvider>
+      <PaperProvider>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <View style={{ flex: 1 }}>
+            <RootLayoutNav />
+            <AuthStatus />
+            <StatusBar style="auto" />
+          </View>
+        </ThemeProvider>
+      </PaperProvider>
+    </AuthProvider>
   );
 }
