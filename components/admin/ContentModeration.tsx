@@ -46,6 +46,34 @@ const ContentModeration: React.FC = () => {
       author: "User3",
       flags: 5,
     },
+    {
+      id: "4",
+      type: "post",
+      content: "Another flagged post",
+      author: "User3",
+      flags: 5,
+    },
+    {
+      id: "5",
+      type: "post",
+      content: "Another flagged post",
+      author: "User3",
+      flags: 5,
+    },
+    {
+      id: "6",
+      type: "post",
+      content: "Another flagged post",
+      author: "User3",
+      flags: 5,
+    },
+    {
+      id: "7",
+      type: "comment",
+      content: "Another flagged post",
+      author: "User3",
+      flags: 5,
+    },
   ];
 
   const filteredContent = contentItems.filter(

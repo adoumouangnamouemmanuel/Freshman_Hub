@@ -10,7 +10,7 @@ export const mockUsers: User[] = [
   {
     id: "1",
     email: "student@ashesi.edu.gh",
-    password: "password123",
+    password: "123",
     name: "John Doe",
     role: "student",
   },
@@ -23,7 +23,7 @@ export const mockUsers: User[] = [
   },
   {
     id: "3",
-    email: "admin1@ashesi.edu.gh",
+    email: "admin@ashesi.edu.gh",
     password: "password123",
     name: "Admin User",
     role: "admin",

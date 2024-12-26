@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { mockUsers, User } from "@/services/users";
 
+export type AuthUser = Omit<User, "password">;
+
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -24,17 +26,25 @@ export function useAuth() {
     loadUser();
   }, []);
 
-  const signIn = async (email: string, password: string): Promise<boolean> => {
+  const signIn = async (
+    email: string,
+    password: string
+  ): Promise<{ success: boolean; user?: AuthUser }> => {
     const foundUser = mockUsers.find(
       (u) => u.email === email && u.password === password
     );
     if (foundUser) {
-      const userWithoutPassword = { ...foundUser };
+      const userWithoutPassword: AuthUser = {
+        id: foundUser.id,
+        email: foundUser.email,
+        role: foundUser.role,
+        name: foundUser.name,
+      };
       setUser(userWithoutPassword);
       await AsyncStorage.setItem("user", JSON.stringify(userWithoutPassword));
-      return true;
+      return { success: true, user: userWithoutPassword };
     }
-    return false;
+    return { success: false };
   };
 
   const signOut = async () => {

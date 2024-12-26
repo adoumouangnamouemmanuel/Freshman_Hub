@@ -1,32 +1,19 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { View, Text, StyleSheet, FlatList, TextInput, Alert } from "react-native";
 import { useTheme } from "@react-navigation/native";
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-}
+import { Button } from "react-native-paper";
+import { Ionicons } from "@expo/vector-icons";
+import UserItem from "./UserItem";
+import AddUserForm from "./AddUserForm";
+import { User } from "@/types/user";
+import { MOCK_USERS } from "@/constants/mockData";
 
 const UserManagement: React.FC = () => {
   const { colors } = useTheme();
+  const [users, setUsers] = useState<User[]>(MOCK_USERS);
   const [searchQuery, setSearchQuery] = useState("");
-
-  // Mock data - replace with actual API call
-  const users: User[] = [
-    { id: "1", name: "John Doe", email: "john@example.com", role: "Student" },
-    { id: "2", name: "Jane Smith", email: "jane@example.com", role: "Faculty" },
-    { id: "3", name: "Bob Johnson", email: "bob@example.com", role: "Student" },
-  ];
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
 
   const filteredUsers = users.filter(
     (user) =>
@@ -34,32 +21,43 @@ const UserManagement: React.FC = () => {
       user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const renderUserItem = ({ item }: { item: User }) => (
-    <View style={[styles.userItem, { backgroundColor: colors.card }]}>
-      <View style={styles.userInfo}>
-        <Text style={[styles.userName, { color: colors.text }]}>
-          {item.name}
-        </Text>
-        <Text style={[styles.userEmail, { color: colors.text }]}>
-          {item.email}
-        </Text>
-        <Text style={[styles.userRole, { color: colors.primary }]}>
-          {item.role}
-        </Text>
-      </View>
-      <View style={styles.userActions}>
-        <TouchableOpacity onPress={() => console.log(`Edit user ${item.id}`)}>
-          <Ionicons name="create-outline" size={24} color={colors.primary} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => console.log(`Delete user ${item.id}`)}>
-          <Ionicons name="trash-outline" size={24} color={colors.notification} />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+  const handleAddUser = (newUser: Partial<User>) => {
+    const userToAdd: User = {
+      ...newUser,
+      id: (users.length + 1).toString(),
+    } as User;
+    setUsers([...users, userToAdd]);
+    setShowAddUser(false);
+  };
+
+  const handleEditUser = (updatedUser: Partial<User>) => {
+    setUsers(
+      users.map((user) =>
+        user.id === updatedUser.id ? { ...user, ...updatedUser } : user
+      )
+    );
+    setEditingUser(null);
+  };
+
+  const handleDeleteUser = (id: string) => {
+    Alert.alert(
+      "Confirm Deletion",
+      "Are you sure you want to delete this user?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => setUsers(users.filter((user) => user.id !== id)),
+        },
+      ]
+    );
+  };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Text style={[styles.title, { color: colors.text }]}>
         User Management
       </Text>
@@ -73,11 +71,35 @@ const UserManagement: React.FC = () => {
           onChangeText={setSearchQuery}
         />
       </View>
+      <Button
+        mode="contained"
+        onPress={() => setShowAddUser(true)}
+        style={styles.addButton}
+      >
+        Add User
+      </Button>
+      {(showAddUser || editingUser) && (
+        <AddUserForm
+          onSubmit={editingUser ? handleEditUser : handleAddUser}
+          onCancel={() => {
+            setShowAddUser(false);
+            setEditingUser(null);
+          }}
+          initialUser={editingUser || undefined}
+        />
+      )}
       <FlatList
         data={filteredUsers}
-        renderItem={renderUserItem}
+        renderItem={({ item }) => (
+          <UserItem
+            user={item}
+            onEdit={(user) => setEditingUser(user)}
+            onDelete={handleDeleteUser}
+          />
+        )}
         keyExtractor={(item) => item.id}
         style={styles.userList}
+        contentContainerStyle={styles.userListContent}
       />
     </View>
   );
@@ -86,9 +108,10 @@ const UserManagement: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 16,
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "bold",
     marginBottom: 16,
   },
@@ -105,35 +128,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     fontSize: 16,
   },
+  addButton: {
+    marginBottom: 16,
+  },
   userList: {
     flex: 1,
   },
-  userItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 12,
-  },
-  userInfo: {
-    flex: 1,
-  },
-  userName: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  userEmail: {
-    fontSize: 14,
-  },
-  userRole: {
-    fontSize: 12,
-    fontWeight: "600",
-    marginTop: 4,
-  },
-  userActions: {
-    flexDirection: "row",
-    gap: 16,
+  userListContent: {
+    paddingBottom: 16,
   },
 });
 

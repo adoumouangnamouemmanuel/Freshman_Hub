@@ -11,7 +11,7 @@ import {
   Pressable,
 } from "react-native";
 import { TextInput, Button, Text } from "react-native-paper";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -47,11 +47,11 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     console.log("Attempting login with:", email);
-    const success = await signIn(email, password);
-    console.log("Login result:", success);
-    if (success) {
+    const result = await signIn(email, password);
+    console.log("Login result:", result);
+    if (result.success && result.user) {
       console.log("Login successful");
-      if (email.includes("admin")) {
+      if (result.user.role === "admin") {
         console.log("Redirecting to admin choice");
         router.replace("/(auth)/admin-choice");
       } else {

@@ -1,0 +1,50 @@
+import { User } from "../types/user";
+
+export const MOCK_USERS: User[] = [
+  {
+    id: "1",
+    name: "John Doe",
+    email: "john@example.com",
+    role: "student",
+    major: "Computer Science",
+    yearOfStudy: 2,
+    countryOfOrigin: "USA",
+    dateOfBirth: new Date(2000, 0, 1),
+  },
+  {
+    id: "2",
+    name: "Jane Smith",
+    email: "jane@example.com",
+    role: "faculty",
+    coursesTaught: ["Introduction to Programming", "Data Structures"],
+    countryOfOrigin: "Canada",
+  },
+  {
+    id: "3",
+    name: "Bob Johnson",
+    email: "bob@example.com",
+    role: "student",
+    major: "Physics",
+    yearOfStudy: 3,
+    countryOfOrigin: "UK",
+    dateOfBirth: new Date(1999, 5, 15),
+  },
+  {
+    id: "4",
+    name: "Alice Williams",
+    email: "alice@example.com",
+    role: "faculty",
+    coursesTaught: ["Quantum Mechanics", "Thermodynamics"],
+    countryOfOrigin: "Australia",
+  },
+  {
+    id: "5",
+    name: "Charlie Brown",
+    email: "charlie@example.com",
+    role: "student",
+    major: "Mathematics",
+    yearOfStudy: 1,
+    countryOfOrigin: "Germany",
+    dateOfBirth: new Date(2001, 8, 22),
+  },
+];

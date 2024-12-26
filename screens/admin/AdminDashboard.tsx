@@ -13,6 +13,25 @@ const AdminDashboard: React.FC = () => {
   const { colors } = useTheme();
   const [activeSection, setActiveSection] = useState("overview");
 
+  const renderContent = () => {
+    switch (activeSection) {
+      case "overview":
+        return (
+          <ScrollView contentContainerStyle={styles.scrollContent}>
+            <QuickActions />
+            <Analytics />
+            <SystemHealth />
+          </ScrollView>
+        );
+      case "users":
+        return <UserManagement />;
+      case "content":
+        return <ContentModeration />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: colors.background }]}
@@ -21,23 +40,16 @@ const AdminDashboard: React.FC = () => {
         activeSection={activeSection}
         onSectionChange={setActiveSection}
       />
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <QuickActions />
-        {activeSection === "overview" && (
-          <>
-            <Analytics />
-            <SystemHealth />
-          </>
-        )}
-        {activeSection === "users" && <UserManagement />}
-        {activeSection === "content" && <ContentModeration />}
-      </ScrollView>
+      <View style={styles.content}>{renderContent()}</View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  content: {
     flex: 1,
   },
   scrollContent: {

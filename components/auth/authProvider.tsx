@@ -1,7 +1,15 @@
 import React, { createContext, useContext, ReactNode } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth, AuthUser } from "@/hooks/useAuth";
 
-type AuthContextType = ReturnType<typeof useAuth>;
+type AuthContextType = {
+  user: AuthUser | null;
+  isLoading: boolean;
+  signIn: (
+    email: string,
+    password: string
+  ) => Promise<{ success: boolean; user?: AuthUser }>;
+  signOut: () => Promise<void>;
+};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

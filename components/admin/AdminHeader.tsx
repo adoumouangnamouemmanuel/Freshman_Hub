@@ -17,6 +17,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
   const sections = [
     { id: "overview", icon: "grid-outline", label: "Overview" },
     { id: "users", icon: "people-outline", label: "Users" },
+    { id: "Announcement", icon: "megaphone-outline", label: "Events" },
     { id: "content", icon: "document-text-outline", label: "Content" },
   ];
 
@@ -87,8 +88,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   tabText: {
-    marginLeft: 8,
-    fontSize: 16,
+    marginLeft: 5,
+    fontSize: 14,
     fontWeight: "600",
   },
 });
