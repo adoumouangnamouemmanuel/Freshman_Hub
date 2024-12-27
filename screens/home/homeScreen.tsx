@@ -7,9 +7,13 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
-import Animated, { FadeInDown } from "react-native-reanimated";
+import Animated, {
+  FadeInDown,
+  useSharedValue,
+  useAnimatedScrollHandler,
+  useDerivedValue,
+} from "react-native-reanimated";
 import Header from "@/components/home/header";
-// import ShortcutButtons from "@/components/home/ShortcutButtons";
 import AnnouncementCard from "@/components/home/AnnouncementCard";
 import ShortVideos from "@/components/home/ShortVideos";
 import ActivityFeed from "@/components/home/ActivityFeed";
@@ -17,11 +21,27 @@ import SupportSection from "@/components/home/SupportSection";
 import InspirationCard from "@/components/home/InspirationCard";
 import StudentJourney from "@/components/home/StudentJourney";
 import { router } from "expo-router";
+import { useAuthContext } from "@/components/auth/authProvider";
+import { Button } from "react-native-paper";
+
+const HEADER_HEIGHT = 100;
 
 export default function HomeScreen() {
   const [temperature] = useState(25);
   const [activityFilter, setActivityFilter] = useState("all");
+  const { signOut } = useAuthContext();
+  const scrollY = useSharedValue(0);
+  const lastScrollY = useSharedValue(0);
+  const isScrollingDown = useSharedValue(false);
 
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      const currentScrollY = event.contentOffset.y;
+      isScrollingDown.value = currentScrollY > lastScrollY.value;
+      lastScrollY.value = currentScrollY;
+      scrollY.value = currentScrollY;
+    },
+  });
 
   interface Activity {
     id: string;
@@ -32,6 +52,7 @@ export default function HomeScreen() {
     icon: string;
     color: string;
   }
+
   const shortcutButtons = [
     {
       id: "1",
@@ -129,119 +150,131 @@ export default function HomeScreen() {
         temperature={temperature}
         profileImage="https://picsum.photos/100"
         onProfilePress={() => router.push("/profile")}
+        scrollY={scrollY}
+        isScrollingDown={isScrollingDown}
       />
 
-      <ScrollView
+      {/* Temporary Sign Out Button */}
+      <View style={styles.signOutContainer}>
+        <Button onPress={signOut} mode="contained">
+          Sign Out
+        </Button>
+      </View>
+
+      <Animated.ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
       >
-        <Animated.View
-          entering={FadeInDown.duration(1000).springify()}
-          style={styles.content}
-        >
-          {/* <ShortcutButtons buttons={shortcutButtons} /> */}
+        <View style={{ paddingTop: 16 }}>
+          <Animated.View
+            entering={FadeInDown.duration(1000).springify()}
+            style={styles.content}
+          >
+            <AnnouncementCard
+              type="quote"
+              title="Quote of the Day"
+              content="The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt"
+              onPress={() => console.log("Quote pressed")}
+            />
 
-          <AnnouncementCard
-            type="quote"
-            title="Quote of the Day"
-            content="The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt"
-            onPress={() => console.log("Quote pressed")}
-          />
+            <ShortVideos
+              videos={videos}
+              onVideoPress={(videoId) => console.log("Video pressed:", videoId)}
+            />
 
-          <ShortVideos
-            videos={videos}
-            onVideoPress={(videoId) => console.log("Video pressed:", videoId)}
-          />
+            <StudentJourney />
 
-          <StudentJourney />
+            <AnnouncementCard
+              type="announcement"
+              title="Campus Update"
+              content="The new student center will be opening next week! Join us for the grand opening ceremony."
+              onPress={() => console.log("Announcement pressed")}
+            />
 
-          <AnnouncementCard
-            type="announcement"
-            title="Campus Update"
-            content="The new student center will be opening next week! Join us for the grand opening ceremony."
-            onPress={() => console.log("Announcement pressed")}
-          />
-
-          <View style={styles.activityFilterContainer}>
-            <Text style={styles.activityFilterTitle}>Recent Activity</Text>
-            <View style={styles.activityFilterButtons}>
-              <TouchableOpacity
-                style={[
-                  styles.filterButton,
-                  activityFilter === "all" && styles.activeFilterButton,
-                ]}
-                onPress={() => setActivityFilter("all")}
-              >
-                <Text
+            <View style={styles.activityFilterContainer}>
+              <Text style={styles.activityFilterTitle}>Recent Activity</Text>
+              <View style={styles.activityFilterButtons}>
+                <TouchableOpacity
                   style={[
-                    styles.filterButtonText,
-                    activityFilter === "all" && styles.activeFilterButtonText,
+                    styles.filterButton,
+                    activityFilter === "all" && styles.activeFilterButton,
                   ]}
+                  onPress={() => setActivityFilter("all")}
                 >
-                  All
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.filterButton,
-                  activityFilter === "event" && styles.activeFilterButton,
-                ]}
-                onPress={() => setActivityFilter("event")}
-              >
-                <Text
+                  <Text
+                    style={[
+                      styles.filterButtonText,
+                      activityFilter === "all" && styles.activeFilterButtonText,
+                    ]}
+                  >
+                    All
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={[
-                    styles.filterButtonText,
-                    activityFilter === "event" && styles.activeFilterButtonText,
+                    styles.filterButton,
+                    activityFilter === "event" && styles.activeFilterButton,
                   ]}
+                  onPress={() => setActivityFilter("event")}
                 >
-                  Events
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.filterButton,
-                  activityFilter === "announcement" &&
-                    styles.activeFilterButton,
-                ]}
-                onPress={() => setActivityFilter("announcement")}
-              >
-                <Text
+                  <Text
+                    style={[
+                      styles.filterButtonText,
+                      activityFilter === "event" &&
+                        styles.activeFilterButtonText,
+                    ]}
+                  >
+                    Events
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={[
-                    styles.filterButtonText,
+                    styles.filterButton,
                     activityFilter === "announcement" &&
-                      styles.activeFilterButtonText,
+                      styles.activeFilterButton,
                   ]}
+                  onPress={() => setActivityFilter("announcement")}
                 >
-                  Announcements
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.filterButton,
-                  activityFilter === "deadline" && styles.activeFilterButton,
-                ]}
-                onPress={() => setActivityFilter("deadline")}
-              >
-                <Text
+                  <Text
+                    style={[
+                      styles.filterButtonText,
+                      activityFilter === "announcement" &&
+                        styles.activeFilterButtonText,
+                    ]}
+                  >
+                    Announcements
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
                   style={[
-                    styles.filterButtonText,
-                    activityFilter === "deadline" &&
-                      styles.activeFilterButtonText,
+                    styles.filterButton,
+                    activityFilter === "deadline" && styles.activeFilterButton,
                   ]}
+                  onPress={() => setActivityFilter("deadline")}
                 >
-                  Deadlines
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={[
+                      styles.filterButtonText,
+                      activityFilter === "deadline" &&
+                        styles.activeFilterButtonText,
+                    ]}
+                  >
+                    Deadlines
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
 
-          <ActivityFeed activities={filteredActivities()} />
+            <ActivityFeed activities={filteredActivities()} />
 
-          <SupportSection />
+            <SupportSection />
 
-          <InspirationCard />
-        </Animated.View>
-      </ScrollView>
+            <InspirationCard />
+          </Animated.View>
+        </View>
+      </Animated.ScrollView>
     </SafeAreaView>
   );
 }
@@ -253,10 +286,17 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    paddingTop: HEADER_HEIGHT,
   },
   content: {
     flex: 1,
     paddingBottom: 32,
+  },
+  signOutContainer: {
+    position: "absolute",
+    top: HEADER_HEIGHT + 16,
+    right: 16,
+    zIndex: 1001,
   },
   activityFilterContainer: {
     marginTop: 24,

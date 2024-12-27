@@ -1,129 +1,130 @@
 import React from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import Animated, {
-  FadeIn,
   useAnimatedStyle,
-  withSpring,
+  withTiming,
+  interpolate,
+  Extrapolate,
 } from "react-native-reanimated";
-import { useAuthContext } from "@/components/auth/authProvider";
-import { Button } from "react-native-paper";
+
+const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
+
+const HEADER_HEIGHT = 100;
 
 interface HeaderProps {
   temperature: number;
   profileImage: string;
   onProfilePress: () => void;
+  scrollY: Animated.SharedValue<number>;
+  isScrollingDown: Animated.SharedValue<boolean>;
 }
 
 const Header: React.FC<HeaderProps> = ({
   temperature,
   profileImage,
   onProfilePress,
+  scrollY,
+  isScrollingDown,
 }) => {
-  const profileAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: withSpring(1) }],
-  }));
-  const { signOut } = useAuthContext();
+  const headerAnimatedStyle = useAnimatedStyle(() => {
+    const translateY = interpolate(
+      scrollY.value,
+      [0, HEADER_HEIGHT],
+      [0, -HEADER_HEIGHT],
+      Extrapolate.CLAMP
+    );
+
+    return {
+      transform: [
+        {
+          translateY: withTiming(isScrollingDown.value ? translateY : 0, {
+            duration: 300,
+          }),
+        },
+      ],
+    };
+  });
 
   return (
-    <BlurView intensity={50} style={styles.container}>
-      <View style={styles.mainHeader}>
-        <View>
-          <Animated.Text
-            entering={FadeIn.duration(800)}
-            style={styles.welcomeText}
-          >
-            Welcome, Freshman!
-            <Button onPress={signOut} mode="text" compact>
-              Logout
-            </Button>
-          </Animated.Text>
-
-          <View style={styles.temperatureContainer}>
-            <Ionicons name="sunny" size={20} color="#000" />
-            <Text style={styles.temperature}>{temperature}°C</Text>
-          </View>
-        </View>
-
+    <AnimatedBlurView
+      intensity={50}
+      style={[styles.header, headerAnimatedStyle]}
+    >
+      <View style={styles.headerContent}>
         <TouchableOpacity onPress={onProfilePress}>
-          <Animated.View
-            style={[styles.profileContainer, profileAnimatedStyle]}
-          >
-            <Image source={{ uri: profileImage }} style={styles.profileImage} />
-          </Animated.View>
+          <Image source={{ uri: profileImage }} style={styles.profileImage} />
         </TouchableOpacity>
+
+        <TouchableOpacity style={styles.searchBar} activeOpacity={0.7}>
+          <Ionicons name="search" size={20} color="#666" />
+          <Text style={styles.searchText}>Search</Text>
+        </TouchableOpacity>
+
+        <View style={styles.headerIcons}>
+          <TouchableOpacity style={styles.iconButton}>
+            <Ionicons name="add" size={24} color="#666" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton}>
+            <Ionicons name="help-circle-outline" size={24} color="#666" />
+          </TouchableOpacity>
+        </View>
       </View>
-    </BlurView>
+    </AnimatedBlurView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    paddingTop: 44,
-    paddingHorizontal: 16,
-    paddingBottom: 16,
+  header: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
     backgroundColor: "rgba(255, 255, 255, 0.8)",
+    height: HEADER_HEIGHT,
   },
-  topBar: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  time: {
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  statusIcons: {
+  headerContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-  },
-  batteryContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  batteryText: {
-    fontSize: 12,
-    marginLeft: 4,
-  },
-  mainHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  welcomeText: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 4,
-  },
-  temperatureContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    padding: 8,
-    borderRadius: 16,
-    alignSelf: "flex-start",
-  },
-  temperature: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  profileContainer: {
-    borderRadius: 20,
-    overflow: "hidden",
-    elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    paddingHorizontal: 16,
+    paddingTop: 44,
+    paddingBottom: 12,
+    gap: 12,
   },
   profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+  },
+  searchBar: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f0f2f5",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    gap: 8,
+  },
+  searchText: {
+    color: "#666",
+    fontSize: 16,
+  },
+  headerIcons: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  iconButton: {
+    padding: 4,
   },
 });
 

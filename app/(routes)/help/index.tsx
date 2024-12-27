@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Searchbar, FAB } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import Header from "@/components/common/Header";
 import HelpCategories from "@/components/help/HelpCategories";
 import FAQCard from "@/components/help/FAQCard";
 import EmergencyDialog from "@/components/help/EmergencyDialog";
-import { useRouter } from "expo-router";
 
 export default function HelpCenterScreen() {
   const router = useRouter();
@@ -14,7 +15,8 @@ export default function HelpCenterScreen() {
     useState(false);
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
+      <Header title="Help Center" showBackButton={false} />
       <ScrollView style={styles.scrollView}>
         <Searchbar
           placeholder="Search for help"
@@ -25,7 +27,9 @@ export default function HelpCenterScreen() {
         <FAQCard />
         <HelpCategories
           onCategoryPress={(category) =>
-            router.push(`/help/${category.toLowerCase().replace(" ", "-")}` as any)
+            router.push(
+              `/help/${category.toLowerCase().replace(" ", "-")}` as any
+            )
           }
         />
       </ScrollView>

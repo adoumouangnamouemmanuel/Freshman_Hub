@@ -18,12 +18,15 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import { useRouter } from "expo-router";
 import PersonalInfo from "@/components/profile/PersonalInfo";
 import AcademicInfo from "@/components/profile/AcademicInfo";
+import Header from "@/components/profile/Header";
 
 const { width } = Dimensions.get("window");
 
 const ProfileScreen: React.FC = () => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("about");
   const tabIndicatorPosition = useSharedValue(0);
 
@@ -86,8 +89,17 @@ const ProfileScreen: React.FC = () => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
+      <Header
+        title="Profile"
+        onBack={() => router.back()}
+        onSettings={() => router.push("/(routes)/settings")}
+      />
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
         <LinearGradient
           colors={["#8B5CF6", "#EC4899"]}
           start={{ x: 0, y: 0 }}
@@ -106,18 +118,15 @@ const ProfileScreen: React.FC = () => {
               <Ionicons name="camera" size={20} color="#FFF" />
             </TouchableOpacity>
           </Animated.View>
-          <Animated.Text
+          <Animated.View
             entering={FadeInDown.delay(400).springify()}
-            style={styles.name}
+            style={styles.textContainer}
           >
-            Emmanuel Adoum
-          </Animated.Text>
-          <Animated.Text
-            entering={FadeInDown.delay(500).springify()}
-            style={styles.major}
-          >
-            Computer Engineering • Class of 2027
-          </Animated.Text>
+            <Text style={styles.name}>Emmanuel Adoum</Text>
+            <Text style={styles.major}>
+              Computer Engineering • Class of 2027
+            </Text>
+          </Animated.View>
         </LinearGradient>
 
         <View style={styles.statsContainer}>
@@ -352,6 +361,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F3F4F6",
   },
+  scrollContent: {
+    paddingBottom: 20,
+  },
   header: {
     padding: 20,
     alignItems: "center",
@@ -455,7 +467,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 20,
     padding: 20,
-    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 18,
@@ -465,16 +476,6 @@ const styles = StyleSheet.create({
   },
   marginTop: {
     marginTop: 20,
-  },
-  infoItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  infoText: {
-    fontSize: 16,
-    color: "#666",
-    marginLeft: 10,
   },
   aboutText: {
     fontSize: 16,
@@ -532,6 +533,9 @@ const styles = StyleSheet.create({
   activityDescription: {
     fontSize: 14,
     color: "#666",
+  },
+  textContainer: {
+    alignItems: "center",
   },
 });
 

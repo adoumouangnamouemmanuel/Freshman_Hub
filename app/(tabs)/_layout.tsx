@@ -15,7 +15,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-       headerShown: false,
+        headerShown: false,
       }}
     >
       <Tabs.Screen
@@ -86,12 +86,12 @@ export default function TabLayout() {
       /> */}
 
       <Tabs.Screen
-        name="profile/index"
+        name="notification/index"
         options={{
-          title: "Profile",
+          title: "Notifications",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "person" : "person-outline"}
+              name={focused ? "notifications" : "notifications-outline"}
               color={color}
             />
           ),

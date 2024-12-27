@@ -12,6 +12,8 @@ import {
 } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Header from "@/components/common/Header";
 import CoachCard from "@/components/coaching/CoachCard";
 import MeetingScheduler from "@/components/coaching/MeetingScheduler";
 import ChatModal from "@/components/coaching/ChatModal";
@@ -89,139 +91,145 @@ const CoachingScreen: React.FC = () => {
   };
 
   return (
-    <LinearGradient
-      colors={["#4c669f", "#3b5998", "#192f6a"]}
-      style={styles.container}
-    >
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Title style={styles.title}>Your Coaching Journey</Title>
-
-        <Card style={styles.infoCard}>
-          <Card.Content>
-            <Paragraph style={styles.infoText}>
-              Welcome to your personalized coaching experience! You're assigned
-              one dedicated coach and have access to the head coach. Remember to
-              schedule your required meetings to make the most of this
-              opportunity.
-            </Paragraph>
-          </Card.Content>
-        </Card>
-
-        {assignedCoach && (
-          <CoachCard
-            coach={assignedCoach}
-            onSchedule={() => handleScheduleMeeting(assignedCoach)}
-            renderMeetingStatus={() => renderMeetingStatus(assignedCoach)}
-            onChat={() => setIsChatVisible(true)}
-          />
-        )}
-
-        {headCoach && (
-          <CoachCard
-            coach={headCoach}
-            onSchedule={() => handleScheduleMeeting(headCoach)}
-            renderMeetingStatus={() => renderMeetingStatus(headCoach)}
-            isHeadCoach
-          />
-        )}
-
-        <EngagementTracker
-          assignedCoach={assignedCoach}
-          headCoach={headCoach}
-        />
-
-        <Button
-          mode="contained"
-          onPress={() => setIsInfoDialogVisible(true)}
-          style={styles.infoButton}
-          icon="information"
-        >
-          Coaching Program Info
-        </Button>
-      </ScrollView>
-
-      <Portal>
-        {selectedCoach && (
-          <MeetingScheduler
-            visible={isSchedulerVisible}
-            onDismiss={() => setIsSchedulerVisible(false)}
-            coach={selectedCoach}
-          />
-        )}
-        <Dialog
-          visible={isInfoDialogVisible}
-          onDismiss={() => setIsInfoDialogVisible(false)}
-        >
-          <Dialog.Title>Coaching Program Information</Dialog.Title>
-          <Dialog.Content>
-            <Paragraph>
-              The Freshman Coaching Program is designed to support your
-              transition and success at Ashesi University. Here's what you need
-              to know:
-            </Paragraph>
-            <Paragraph>
-              • You are assigned one dedicated coach for personal guidance.
-            </Paragraph>
-            <Paragraph>
-              • You should meet with your assigned coach twice during the
-              semester.
-            </Paragraph>
-            <Paragraph>
-              • You also have one required meeting with the head coach.
-            </Paragraph>
-            <Paragraph>
-              • These meetings are opportunities to discuss your academic
-              progress, career goals, and any challenges you may be facing.
-            </Paragraph>
-            <Paragraph>
-              • Don't hesitate to reach out if you need additional support or
-              guidance!
-            </Paragraph>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setIsInfoDialogVisible(false)}>
-              Got it
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-        {assignedCoach && (
-          <ChatModal
-            visible={isChatVisible}
-            onDismiss={() => setIsChatVisible(false)}
-            coach={assignedCoach}
-          />
-        )}
-      </Portal>
-
-      <Animated.View
-        style={[
-          styles.fabContainer,
-          {
-            transform: [
-              {
-                translateY: fabAnimation.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, -10],
-                }),
-              },
-            ],
-          },
-        ]}
+    <SafeAreaView style={styles.safeArea} edges={["top"]}>
+      <Header title="Coaching" showBackButton={false} />
+      <LinearGradient
+        colors={["#4c669f", "#3b5998", "#192f6a"]}
+        style={styles.container}
       >
-        <FAB
-          style={styles.fab}
-          icon="calendar"
-          onPress={() => setIsSchedulerVisible(true)}
-          label="Schedule Meeting"
-        />
-      </Animated.View>
-    </LinearGradient>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <Title style={styles.title}>Your Coaching Journey</Title>
+
+          <Card style={styles.infoCard}>
+            <Card.Content>
+              <Paragraph style={styles.infoText}>
+                Welcome to your personalized coaching experience! You're
+                assigned one dedicated coach and have access to the head coach.
+                Remember to schedule your required meetings to make the most of
+                this opportunity.
+              </Paragraph>
+            </Card.Content>
+          </Card>
+
+          {assignedCoach && (
+            <CoachCard
+              coach={assignedCoach}
+              onSchedule={() => handleScheduleMeeting(assignedCoach)}
+              renderMeetingStatus={() => renderMeetingStatus(assignedCoach)}
+              onChat={() => setIsChatVisible(true)}
+            />
+          )}
+
+          {headCoach && (
+            <CoachCard
+              coach={headCoach}
+              onSchedule={() => handleScheduleMeeting(headCoach)}
+              renderMeetingStatus={() => renderMeetingStatus(headCoach)}
+              isHeadCoach
+            />
+          )}
+
+          <EngagementTracker
+            assignedCoach={assignedCoach}
+            headCoach={headCoach}
+          />
+
+          <Button
+            mode="contained"
+            onPress={() => setIsInfoDialogVisible(true)}
+            style={styles.infoButton}
+            icon="information"
+          >
+            Coaching Program Info
+          </Button>
+        </ScrollView>
+
+        <Portal>
+          {selectedCoach && (
+            <MeetingScheduler
+              visible={isSchedulerVisible}
+              onDismiss={() => setIsSchedulerVisible(false)}
+              coach={selectedCoach}
+            />
+          )}
+          <Dialog
+            visible={isInfoDialogVisible}
+            onDismiss={() => setIsInfoDialogVisible(false)}
+          >
+            <Dialog.Title>Coaching Program Information</Dialog.Title>
+            <Dialog.Content>
+              <Paragraph>
+                The Freshman Coaching Program is designed to support your
+                transition and success at Ashesi University. Here's what you
+                need to know:
+              </Paragraph>
+              <Paragraph>
+                • You are assigned one dedicated coach for personal guidance.
+              </Paragraph>
+              <Paragraph>
+                • You should meet with your assigned coach twice during the
+                semester.
+              </Paragraph>
+              <Paragraph>
+                • You also have one required meeting with the head coach.
+              </Paragraph>
+              <Paragraph>
+                • These meetings are opportunities to discuss your academic
+                progress, career goals, and any challenges you may be facing.
+              </Paragraph>
+              <Paragraph>
+                • Don't hesitate to reach out if you need additional support or
+                guidance!
+              </Paragraph>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={() => setIsInfoDialogVisible(false)}>
+                Got it
+              </Button>
+            </Dialog.Actions>
+          </Dialog>
+          {assignedCoach && (
+            <ChatModal
+              visible={isChatVisible}
+              onDismiss={() => setIsChatVisible(false)}
+              coach={assignedCoach}
+            />
+          )}
+        </Portal>
+
+        <Animated.View
+          style={[
+            styles.fabContainer,
+            {
+              transform: [
+                {
+                  translateY: fabAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -10],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
+          <FAB
+            style={styles.fab}
+            icon="calendar"
+            onPress={() => setIsSchedulerVisible(true)}
+            label="Schedule Meeting"
+          />
+        </Animated.View>
+      </LinearGradient>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-    container: {
-      paddingTop: 20,
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#F3F4F6",
+  },
+  container: {
     flex: 1,
   },
   scrollContent: {
