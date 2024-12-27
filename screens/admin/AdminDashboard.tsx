@@ -8,6 +8,8 @@ import UserManagement from "@/components/admin/UserManagement";
 import Analytics from "@/components/admin/Analytics";
 import SystemHealth from "@/components/admin/SystemHealth";
 import ContentModeration from "@/components/admin/ContentModeration";
+import Announcements from "@/components/admin/Announcements";
+import Settings from "@/components/admin/Settings";
 
 const AdminDashboard: React.FC = () => {
   const { colors } = useTheme();
@@ -21,12 +23,15 @@ const AdminDashboard: React.FC = () => {
             <QuickActions />
             <Analytics />
             <SystemHealth />
+            <Settings />
           </ScrollView>
         );
       case "users":
         return <UserManagement />;
       case "content":
         return <ContentModeration />;
+      case "announcement":
+        return <Announcements />;
       default:
         return null;
     }

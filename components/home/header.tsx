@@ -7,6 +7,8 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
+import { useAuthContext } from "@/components/auth/authProvider";
+import { Button } from "react-native-paper";
 
 interface HeaderProps {
   temperature: number;
@@ -22,6 +24,7 @@ const Header: React.FC<HeaderProps> = ({
   const profileAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: withSpring(1) }],
   }));
+  const { signOut } = useAuthContext();
 
   return (
     <BlurView intensity={50} style={styles.container}>
@@ -32,7 +35,11 @@ const Header: React.FC<HeaderProps> = ({
             style={styles.welcomeText}
           >
             Welcome, Freshman!
+            <Button onPress={signOut} mode="text" compact>
+              Logout
+            </Button>
           </Animated.Text>
+
           <View style={styles.temperatureContainer}>
             <Ionicons name="sunny" size={20} color="#000" />
             <Text style={styles.temperature}>{temperature}°C</Text>

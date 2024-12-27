@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
+  ScrollView,
 } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Button } from "react-native-paper";
@@ -35,160 +36,174 @@ const AddUserForm: React.FC<AddUserFormProps> = ({
   };
 
   return (
-    <View style={styles.form}>
-      <TextInput
-        style={[
-          styles.input,
-          { backgroundColor: colors.card, color: colors.text },
-        ]}
-        placeholder="Full Name"
-        placeholderTextColor={colors.text}
-        value={user.name}
-        onChangeText={(text) => setUser({ ...user, name: text })}
-      />
-      <TextInput
-        style={[
-          styles.input,
-          { backgroundColor: colors.card, color: colors.text },
-        ]}
-        placeholder="Email"
-        placeholderTextColor={colors.text}
-        value={user.email}
-        onChangeText={(text) => setUser({ ...user, email: text })}
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={[
-          styles.input,
-          { backgroundColor: colors.card, color: colors.text },
-        ]}
-        placeholder="Country of Origin"
-        placeholderTextColor={colors.text}
-        value={user.countryOfOrigin}
-        onChangeText={(text) => setUser({ ...user, countryOfOrigin: text })}
-      />
-      <View style={styles.roleContainer}>
-        <TouchableOpacity
-          style={[
-            styles.roleButton,
-            user.role === "student" && { backgroundColor: colors.primary },
-          ]}
-          onPress={() => setUser({ ...user, role: "student" })}
-        >
-          <Text
-            style={[
-              styles.roleButtonText,
-              {
-                color:
-                  user.role === "student" ? colors.background : colors.text,
-              },
-            ]}
-          >
-            Student
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.roleButton,
-            user.role === "faculty" && { backgroundColor: colors.primary },
-          ]}
-          onPress={() => setUser({ ...user, role: "faculty" })}
-        >
-          <Text
-            style={[
-              styles.roleButtonText,
-              {
-                color:
-                  user.role === "faculty" ? colors.background : colors.text,
-              },
-            ]}
-          >
-            Faculty
-          </Text>
-        </TouchableOpacity>
-      </View>
-      {user.role === "student" && (
-        <>
-          <TextInput
-            style={[
-              styles.input,
-              { backgroundColor: colors.card, color: colors.text },
-            ]}
-            placeholder="Major"
-            placeholderTextColor={colors.text}
-            value={user.major}
-            onChangeText={(text) => setUser({ ...user, major: text })}
-          />
-          <TextInput
-            style={[
-              styles.input,
-              { backgroundColor: colors.card, color: colors.text },
-            ]}
-            placeholder="Year of Study"
-            placeholderTextColor={colors.text}
-            value={user.yearOfStudy?.toString()}
-            onChangeText={(text) =>
-              setUser({ ...user, yearOfStudy: parseInt(text) || undefined })
-            }
-            keyboardType="numeric"
-          />
-          <TouchableOpacity
-            style={[styles.input, { backgroundColor: colors.card }]}
-            onPress={() => setShowDatePicker(true)}
-          >
-            <Text style={{ color: colors.text }}>
-              {user.dateOfBirth
-                ? user.dateOfBirth.toLocaleDateString()
-                : "Select Date of Birth"}
-            </Text>
-          </TouchableOpacity>
-          {showDatePicker && (
-            <DateTimePicker
-              value={user.dateOfBirth || new Date()}
-              mode="date"
-              display="default"
-              onChange={(event, selectedDate) => {
-                setShowDatePicker(false);
-                if (selectedDate) {
-                  setUser({ ...user, dateOfBirth: selectedDate });
-                }
-              }}
-            />
-          )}
-        </>
-      )}
-      {user.role === "faculty" && (
+    <ScrollView style={styles.scrollView}>
+      <View style={styles.form}>
+        <Text style={[styles.title, { color: colors.text }]}>
+          {initialUser ? "Edit User" : "Add New User"}
+        </Text>
         <TextInput
           style={[
             styles.input,
             { backgroundColor: colors.card, color: colors.text },
           ]}
-          placeholder="Courses Taught (comma-separated)"
+          placeholder="Full Name"
           placeholderTextColor={colors.text}
-          value={user.coursesTaught?.join(", ")}
-          onChangeText={(text) =>
-            setUser({
-              ...user,
-              coursesTaught: text.split(",").map((course) => course.trim()),
-            })
-          }
+          value={user.name}
+          onChangeText={(text) => setUser({ ...user, name: text })}
         />
-      )}
-      <View style={styles.buttonContainer}>
-        <Button mode="contained" onPress={handleSubmit} style={styles.button}>
-          {initialUser ? "Update" : "Add"} User
-        </Button>
-        <Button mode="outlined" onPress={onCancel} style={styles.button}>
-          Cancel
-        </Button>
+        <TextInput
+          style={[
+            styles.input,
+            { backgroundColor: colors.card, color: colors.text },
+          ]}
+          placeholder="Email"
+          placeholderTextColor={colors.text}
+          value={user.email}
+          onChangeText={(text) => setUser({ ...user, email: text })}
+          keyboardType="email-address"
+        />
+        <TextInput
+          style={[
+            styles.input,
+            { backgroundColor: colors.card, color: colors.text },
+          ]}
+          placeholder="Country of Origin"
+          placeholderTextColor={colors.text}
+          value={user.countryOfOrigin}
+          onChangeText={(text) => setUser({ ...user, countryOfOrigin: text })}
+        />
+        <View style={styles.roleContainer}>
+          <TouchableOpacity
+            style={[
+              styles.roleButton,
+              user.role === "student" && { backgroundColor: colors.primary },
+            ]}
+            onPress={() => setUser({ ...user, role: "student" })}
+          >
+            <Text
+              style={[
+                styles.roleButtonText,
+                {
+                  color:
+                    user.role === "student" ? colors.background : colors.text,
+                },
+              ]}
+            >
+              Student
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.roleButton,
+              user.role === "faculty" && { backgroundColor: colors.primary },
+            ]}
+            onPress={() => setUser({ ...user, role: "faculty" })}
+          >
+            <Text
+              style={[
+                styles.roleButtonText,
+                {
+                  color:
+                    user.role === "faculty" ? colors.background : colors.text,
+                },
+              ]}
+            >
+              Faculty
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {user.role === "student" && (
+          <>
+            <TextInput
+              style={[
+                styles.input,
+                { backgroundColor: colors.card, color: colors.text },
+              ]}
+              placeholder="Major"
+              placeholderTextColor={colors.text}
+              value={user.major}
+              onChangeText={(text) => setUser({ ...user, major: text })}
+            />
+            <TextInput
+              style={[
+                styles.input,
+                { backgroundColor: colors.card, color: colors.text },
+              ]}
+              placeholder="Year of Study"
+              placeholderTextColor={colors.text}
+              value={user.yearOfStudy?.toString()}
+              onChangeText={(text) =>
+                setUser({ ...user, yearOfStudy: parseInt(text) || undefined })
+              }
+              keyboardType="numeric"
+            />
+            <TouchableOpacity
+              style={[styles.input, { backgroundColor: colors.card }]}
+              onPress={() => setShowDatePicker(true)}
+            >
+              <Text style={{ color: colors.text }}>
+                {user.dateOfBirth
+                  ? user.dateOfBirth.toLocaleDateString()
+                  : "Select Date of Birth"}
+              </Text>
+            </TouchableOpacity>
+            {showDatePicker && (
+              <DateTimePicker
+                value={user.dateOfBirth || new Date()}
+                mode="date"
+                display="default"
+                onChange={(event, selectedDate) => {
+                  setShowDatePicker(false);
+                  if (selectedDate) {
+                    setUser({ ...user, dateOfBirth: selectedDate });
+                  }
+                }}
+              />
+            )}
+          </>
+        )}
+        {user.role === "faculty" && (
+          <TextInput
+            style={[
+              styles.input,
+              { backgroundColor: colors.card, color: colors.text },
+            ]}
+            placeholder="Courses Taught (comma-separated)"
+            placeholderTextColor={colors.text}
+            value={user.coursesTaught?.join(", ")}
+            onChangeText={(text) =>
+              setUser({
+                ...user,
+                coursesTaught: text.split(",").map((course) => course.trim()),
+              })
+            }
+          />
+        )}
+        <View style={styles.buttonContainer}>
+          <Button mode="contained" onPress={handleSubmit} style={styles.button}>
+            {initialUser ? "Update" : "Add"} User
+          </Button>
+          <Button mode="outlined" onPress={onCancel} style={styles.button}>
+            Cancel
+          </Button>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flexGrow: 1,
+  },
   form: {
+    padding: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
     marginBottom: 16,
+    textAlign: "center",
   },
   input: {
     height: 40,

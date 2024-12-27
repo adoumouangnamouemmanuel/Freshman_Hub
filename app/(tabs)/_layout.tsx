@@ -4,22 +4,18 @@ import React from "react";
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
-import { AuthProvider, useAuthContext } from "@/components/auth/authProvider";
+// import { useAuthContext } from "@/components/auth/authProvider";
 import { Button } from "react-native-paper";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { signOut } = useAuthContext();
+  // const { signOut } = useAuthContext();
 
   return (
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        headerRight: () => (
-          <Button onPress={signOut} mode="text" compact>
-            Logout
-          </Button>
-        ),
+       headerShown: false,
       }}
     >
       <Tabs.Screen

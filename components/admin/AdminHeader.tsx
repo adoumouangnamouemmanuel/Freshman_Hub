@@ -17,7 +17,7 @@ const AdminHeader: React.FC<AdminHeaderProps> = ({
   const sections = [
     { id: "overview", icon: "grid-outline", label: "Overview" },
     { id: "users", icon: "people-outline", label: "Users" },
-    { id: "Announcement", icon: "megaphone-outline", label: "Events" },
+    { id: "announcement", icon: "megaphone-outline", label: "Events" },
     { id: "content", icon: "document-text-outline", label: "Content" },
   ];
 

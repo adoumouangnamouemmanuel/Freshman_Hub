@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, FlatList, TextInput, Alert } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TextInput,
+  Alert,
+  Modal,
+} from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Button } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
@@ -78,16 +86,6 @@ const UserManagement: React.FC = () => {
       >
         Add User
       </Button>
-      {(showAddUser || editingUser) && (
-        <AddUserForm
-          onSubmit={editingUser ? handleEditUser : handleAddUser}
-          onCancel={() => {
-            setShowAddUser(false);
-            setEditingUser(null);
-          }}
-          initialUser={editingUser || undefined}
-        />
-      )}
       <FlatList
         data={filteredUsers}
         renderItem={({ item }) => (
@@ -101,6 +99,33 @@ const UserManagement: React.FC = () => {
         style={styles.userList}
         contentContainerStyle={styles.userListContent}
       />
+      <Modal
+        visible={showAddUser || !!editingUser}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => {
+          setShowAddUser(false);
+          setEditingUser(null);
+        }}
+      >
+        <View style={styles.modalContainer}>
+          <View
+            style={[
+              styles.modalContent,
+              { backgroundColor: colors.background },
+            ]}
+          >
+            <AddUserForm
+              onSubmit={editingUser ? handleEditUser : handleAddUser}
+              onCancel={() => {
+                setShowAddUser(false);
+                setEditingUser(null);
+              }}
+              initialUser={editingUser || undefined}
+            />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -136,6 +161,18 @@ const styles = StyleSheet.create({
   },
   userListContent: {
     paddingBottom: 16,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: "90%",
+    maxHeight: "90%",
+    borderRadius: 10,
+    padding: 20,
   },
 });
 
