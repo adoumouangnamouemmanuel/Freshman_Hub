@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import {
   View,
-  Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
   Image,
   Dimensions,
+  Text,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -21,6 +21,9 @@ import Animated, {
 import { useRouter } from "expo-router";
 import PersonalInfo from "@/components/profile/PersonalInfo";
 import AcademicInfo from "@/components/profile/AcademicInfo";
+import AchievementSection from "@/components/profile/AchievementSection";
+import CourseSection from "@/components/profile/CourseSection";
+import ActivitySection from "@/components/profile/ActivitySection";
 import Header from "@/components/profile/Header";
 
 const { width } = Dimensions.get("window");
@@ -43,6 +46,25 @@ const ProfileScreen: React.FC = () => {
   const [gpa, setGPA] = useState("3.8");
   const [isGPAPrivate, setIsGPAPrivate] = useState(false);
 
+  const updateGPA = (newGPA: string) => {
+    setGPA(newGPA);
+  };
+
+  const toggleGPAPrivacy = () => {
+    setIsGPAPrivate(!isGPAPrivate);
+  };
+
+  const updatePersonalInfo = (updatedInfo: any) => {
+    setPersonalInfo(updatedInfo);
+  };
+
+  const togglePersonalInfoPrivacy = (key: string) => {
+    setPersonalInfo((prevInfo) => ({
+      ...prevInfo,
+      [key]: { ...prevInfo[key], isPrivate: !prevInfo[key].isPrivate },
+    }));
+  };
+
   const tabIndicatorStyle = useAnimatedStyle(() => {
     return {
       transform: [{ translateX: tabIndicatorPosition.value }],
@@ -52,28 +74,6 @@ const ProfileScreen: React.FC = () => {
   const handleTabPress = (tab: string, index: number) => {
     setActiveTab(tab);
     tabIndicatorPosition.value = withSpring(index * (width / 4));
-  };
-
-  const updatePersonalInfo = (key: string, newValue: string) => {
-    setPersonalInfo((prev) => ({
-      ...prev,
-      [key]: { ...prev[key], value: newValue },
-    }));
-  };
-
-  const togglePersonalInfoPrivacy = (key: string) => {
-    setPersonalInfo((prev) => ({
-      ...prev,
-      [key]: { ...prev[key], isPrivate: !prev[key].isPrivate },
-    }));
-  };
-
-  const updateGPA = (newGPA: string) => {
-    setGPA(newGPA);
-  };
-
-  const toggleGPAPrivacy = () => {
-    setIsGPAPrivate((prev) => !prev);
   };
 
   const renderAchievementSection = (title: string, achievements: string[]) => (
@@ -114,9 +114,6 @@ const ProfileScreen: React.FC = () => {
               source={{ uri: "https://picsum.photos/200" }}
               style={styles.profileImage}
             />
-            <TouchableOpacity style={styles.editButton}>
-              <Ionicons name="camera" size={20} color="#FFF" />
-            </TouchableOpacity>
           </Animated.View>
           <Animated.View
             entering={FadeInDown.delay(400).springify()}
@@ -214,21 +211,15 @@ const ProfileScreen: React.FC = () => {
             entering={FadeInDown.delay(200).springify()}
             style={styles.contentContainer}
           >
-            <Text style={styles.sectionTitle}>Personal Information</Text>
             <PersonalInfo
               data={personalInfo}
-              onUpdate={updatePersonalInfo}
               onTogglePrivacy={togglePersonalInfoPrivacy}
             />
 
-            <Text style={[styles.sectionTitle, styles.marginTop]}>
-              Academic Information
-            </Text>
             <AcademicInfo
               gpa={gpa}
-              major="Computer Science"
+              major="Computer Engineering"
               classYear="2027"
-              onUpdateGPA={updateGPA}
               isGPAPrivate={isGPAPrivate}
               onToggleGPAPrivacy={toggleGPAPrivacy}
             />
@@ -236,13 +227,15 @@ const ProfileScreen: React.FC = () => {
             <Text style={[styles.sectionTitle, styles.marginTop]}>
               About Me
             </Text>
+            <View style={styles.aboutContent}>
             <Text style={styles.aboutText}>
-              Passionate computer science student with a keen interest in
+              Passionate computer engineering student with a keen interest in
               artificial intelligence and machine learning. Always eager to
               learn and collaborate on innovative projects. I believe in the
               power of technology to transform lives and am committed to using
               my skills to make a positive impact in my community and beyond.
             </Text>
+            </View>
           </Animated.View>
         )}
 
@@ -251,21 +244,30 @@ const ProfileScreen: React.FC = () => {
             entering={FadeInDown.delay(200).springify()}
             style={styles.contentContainer}
           >
-            {renderAchievementSection("Leadership", [
-              "Student Government Representative",
-              "Computer Science Society President",
-              "Peer Mentor for Freshman Students",
-            ])}
-            {renderAchievementSection("Scholarship", [
-              "Dean's List - Fall 2023",
-              "Academic Excellence Scholarship Recipient",
-              "1st Place, Ashesi Coding Competition 2023",
-            ])}
-            {renderAchievementSection("Citizenship", [
-              "Volunteer, Community Outreach Program",
-              "Organizer, Campus Sustainability Initiative",
-              "Participant, Ashesi Robotics Workshop for High School Students",
-            ])}
+            <AchievementSection
+              title="Leadership"
+              achievements={[
+                "Student Government Representative",
+                "Computer Science Society President",
+                "Peer Mentor for Freshman Students",
+              ]}
+            />
+            <AchievementSection
+              title="Scholarship"
+              achievements={[
+                "Dean's List - Fall 2023",
+                "Academic Excellence Scholarship Recipient",
+                "1st Place, Ashesi Coding Competition 2023",
+              ]}
+            />
+            <AchievementSection
+              title="Citizenship"
+              achievements={[
+                "Volunteer, Community Outreach Program",
+                "Organizer, Campus Sustainability Initiative",
+                "Participant, Ashesi Robotics Workshop for High School Students",
+              ]}
+            />
           </Animated.View>
         )}
 
@@ -274,40 +276,28 @@ const ProfileScreen: React.FC = () => {
             entering={FadeInDown.delay(200).springify()}
             style={styles.contentContainer}
           >
-            <Text style={styles.sectionTitle}>Current Courses</Text>
-            {[
-              "Data Structures and Algorithms",
-              "Web Technologies",
-              "Calculus II",
-              "African Studies",
-            ].map((course, index) => (
-              <View key={index} style={styles.courseItem}>
-                <Ionicons name="book-outline" size={20} color="#8B5CF6" />
-                <Text style={styles.courseText}>{course}</Text>
-              </View>
-            ))}
-
-            <Text style={[styles.sectionTitle, styles.marginTop]}>
-              Completed Courses
-            </Text>
-            <Text style={styles.completedCoursesText}>
-              11 courses completed
-            </Text>
-            {[
-              "Introduction to Computing",
-              "Discrete Mathematics",
-              "Calculus I",
-              "Written and Oral Communication",
-            ].map((course, index) => (
-              <View key={index} style={styles.courseItem}>
-                <Ionicons
-                  name="checkmark-circle-outline"
-                  size={20}
-                  color="#10B981"
-                />
-                <Text style={styles.courseText}>{course}</Text>
-              </View>
-            ))}
+            <CourseSection
+              title="Current Courses"
+              courses={[
+                "Data Structures and Algorithms",
+                "Web Technologies",
+                "Calculus II",
+                "African Studies",
+              ]}
+              iconName="book-outline"
+              iconColor="#8B5CF6"
+            />
+            <CourseSection
+              title="Completed Courses"
+              courses={[
+                "Introduction to Computing",
+                "Discrete Mathematics",
+                "Calculus I",
+                "Written and Oral Communication",
+              ]}
+              iconName="checkmark-circle-outline"
+              iconColor="#10B981"
+            />
           </Animated.View>
         )}
 
@@ -316,39 +306,34 @@ const ProfileScreen: React.FC = () => {
             entering={FadeInDown.delay(200).springify()}
             style={styles.contentContainer}
           >
-            <Text style={styles.sectionTitle}>Campus Activities</Text>
-            <View style={styles.activityItem}>
-              <Ionicons name="people" size={24} color="#8B5CF6" />
-              <View style={styles.activityTextContainer}>
-                <Text style={styles.activityTitle}>
-                  Computer Science Society
-                </Text>
-                <Text style={styles.activityDescription}>
-                  President, Event Organizer
-                </Text>
-              </View>
-            </View>
-            <View style={styles.activityItem}>
-              <Ionicons name="football" size={24} color="#10B981" />
-              <View style={styles.activityTextContainer}>
-                <Text style={styles.activityTitle}>Intramural Soccer Team</Text>
-                <Text style={styles.activityDescription}>Team Captain</Text>
-              </View>
-            </View>
-            <View style={styles.activityItem}>
-              <Ionicons name="musical-notes" size={24} color="#F59E0B" />
-              <View style={styles.activityTextContainer}>
-                <Text style={styles.activityTitle}>Ashesi Choir</Text>
-                <Text style={styles.activityDescription}>Member</Text>
-              </View>
-            </View>
-            <View style={styles.activityItem}>
-              <Ionicons name="globe" size={24} color="#EC4899" />
-              <View style={styles.activityTextContainer}>
-                <Text style={styles.activityTitle}>Model United Nations</Text>
-                <Text style={styles.activityDescription}>Delegate</Text>
-              </View>
-            </View>
+            <ActivitySection
+              activities={[
+                {
+                  title: "Computer Science Society",
+                  description: "President, Event Organizer",
+                  icon: "people",
+                  color: "#8B5CF6",
+                },
+                {
+                  title: "Intramural Soccer Team",
+                  description: "Team Captain",
+                  icon: "football",
+                  color: "#10B981",
+                },
+                {
+                  title: "Ashesi Choir",
+                  description: "Member",
+                  icon: "musical-notes",
+                  color: "#F59E0B",
+                },
+                {
+                  title: "Model United Nations",
+                  description: "Delegate",
+                  icon: "globe",
+                  color: "#EC4899",
+                },
+              ]}
+            />
           </Animated.View>
         )}
       </ScrollView>
@@ -383,15 +368,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-  editButton: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    backgroundColor: "#8B5CF6",
-    borderRadius: 20,
-    width: 40,
-    height: 40,
-    justifyContent: "center",
+  textContainer: {
     alignItems: "center",
   },
   name: {
@@ -482,6 +459,23 @@ const styles = StyleSheet.create({
     color: "#666",
     lineHeight: 24,
   },
+  aboutContent: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
   achievementSection: {
     marginBottom: 20,
   },
@@ -533,9 +527,6 @@ const styles = StyleSheet.create({
   activityDescription: {
     fontSize: 14,
     color: "#666",
-  },
-  textContainer: {
-    alignItems: "center",
   },
 });
 

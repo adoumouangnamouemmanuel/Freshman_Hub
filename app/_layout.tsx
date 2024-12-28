@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import {
   DarkTheme,
   DefaultTheme,
@@ -11,6 +11,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { Provider as PaperProvider } from "react-native-paper";
 import "react-native-reanimated";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { AuthProvider, useAuthContext } from "@/components/auth/authProvider";
@@ -45,12 +46,14 @@ function RootLayoutNav() {
   }
 
   return (
+    <GestureHandlerRootView style={styles.container}>
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(auth)" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="admin" options={{ headerShown: false }} />
       <Stack.Screen name="profile" />
-    </Stack>
+      </Stack>
+    </GestureHandlerRootView>
   );
 }
 
@@ -86,3 +89,10 @@ export default function RootLayout() {
     </AuthProvider>
   );
 }
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

@@ -1,31 +1,33 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
-import EditableField from "./EditableField";
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import PrivacyToggle from './PrivacyToggle';
 
 interface PersonalInfoProps {
   data: {
     [key: string]: { value: string; isPrivate: boolean };
   };
-  onUpdate: (key: string, newValue: string) => void;
   onTogglePrivacy: (key: string) => void;
 }
 
-const PersonalInfo: React.FC<PersonalInfoProps> = ({
-  data,
-  onUpdate,
-  onTogglePrivacy,
-}) => {
+const PersonalInfo: React.FC<PersonalInfoProps> = ({ data, onTogglePrivacy }) => {
   return (
     <View style={styles.container}>
+      <Text style={styles.sectionTitle}>Personal Information</Text>
       {Object.entries(data).map(([key, { value, isPrivate }]) => (
-        <EditableField
-          key={key}
-          label={key.charAt(0).toUpperCase() + key.slice(1)}
-          value={value}
-          onSave={(newValue) => onUpdate(key, newValue)}
-          isPrivate={isPrivate}
-          onTogglePrivacy={() => onTogglePrivacy(key)}
-        />
+        <View key={key} style={styles.infoItem}>
+          <View>
+            <Text style={styles.label}>
+              {key.split(/(?=[A-Z])/).join(" ").toLowerCase()}:
+            </Text>
+            <Text style={styles.value}>{isPrivate ? "••••••" : value}</Text>
+          </View>
+          {['dateOfBirth', 'phone', 'address'].includes(key) && (
+            <PrivacyToggle
+              isPrivate={isPrivate}
+              onToggle={() => onTogglePrivacy(key)}
+            />
+          )}
+        </View>
       ))}
     </View>
   );
@@ -35,6 +37,40 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 20,
   },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 15,
+  },
+  infoItem: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  label: {
+    fontSize: 16,
+    color: '#666',
+    textTransform: 'capitalize',
+  },
+  value: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
+  },
 });
 
 export default PersonalInfo;
+

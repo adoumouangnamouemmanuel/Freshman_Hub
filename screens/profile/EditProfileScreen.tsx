@@ -3,13 +3,12 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  Image,
   TouchableOpacity,
   TextInput,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { Button, Text, Avatar, Dialog, Portal } from "react-native-paper";
+import { Button, Text, Avatar, Dialog, Portal, List } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import Header from "@/components/common/Header";
 import * as ImagePicker from "expo-image-picker";
@@ -21,6 +20,19 @@ interface ProfileData {
   major: string;
   graduationYear: string;
   bio: string;
+  achievements: {
+    leadership: string[];
+    scholarship: string[];
+    citizenship: string[];
+  };
+  courses: {
+    current: string[];
+    completed: string[];
+  };
+  activities: {
+    title: string;
+    role: string;
+  }[];
 }
 
 const EditProfileScreen: React.FC = () => {
@@ -28,6 +40,7 @@ const EditProfileScreen: React.FC = () => {
   const [profileImage, setProfileImage] = useState("https://picsum.photos/200");
   const [isUnsavedChanges, setIsUnsavedChanges] = useState(false);
   const [showDiscardDialog, setShowDiscardDialog] = useState(false);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [profileData, setProfileData] = useState<ProfileData>({
     name: "Emmanuel Adoum",
     email: "emmanuel.adoum@ashesi.edu.gh",
@@ -35,18 +48,61 @@ const EditProfileScreen: React.FC = () => {
     major: "Computer Engineering",
     graduationYear: "2027",
     bio: "Passionate computer engineering student with a keen interest in artificial intelligence and machine learning. Always eager to learn and collaborate on innovative projects.",
+    achievements: {
+      leadership: [
+        "Student Government Representative",
+        "Computer Science Society President",
+        "Peer Mentor for Freshman Students",
+      ],
+      scholarship: [
+        "Dean's List - Fall 2023",
+        "Academic Excellence Scholarship Recipient",
+        "1st Place, Ashesi Coding Competition 2023",
+      ],
+      citizenship: [
+        "Volunteer, Community Outreach Program",
+        "Organizer, Campus Sustainability Initiative",
+        "Participant, Ashesi Robotics Workshop for High School Students",
+      ],
+    },
+    courses: {
+      current: [
+        "Data Structures and Algorithms",
+        "Web Technologies",
+        "Calculus II",
+        "African Studies",
+      ],
+      completed: [
+        "Introduction to Computing",
+        "Discrete Mathematics",
+        "Calculus I",
+        "Written and Oral Communication",
+      ],
+    },
+    activities: [],
+  });
+  const [activities, setActivities] = useState({
+    current: [
+      { title: "Computer Science Society", role: "President, Event Organizer" },
+      { title: "Intramural Soccer Team", role: "Team Captain" },
+    ],
+    past: [
+      { title: "Ashesi Choir", role: "Member" },
+      { title: "Model United Nations", role: "Delegate" },
+    ],
   });
 
-  const handleInputChange = (key: keyof ProfileData, value: string) => {
+  const handleInputChange = (key: keyof ProfileData, value: any) => {
     setProfileData((prevData) => ({ ...prevData, [key]: value }));
     setIsUnsavedChanges(true);
   };
 
   const handleSave = () => {
-    // Here you would typically send the updated data to your backend
-    console.log("Saving profile data:", profileData);
-    setIsUnsavedChanges(false);
-    router.back();
+    if (isUnsavedChanges) {
+      setShowSaveDialog(true);
+    } else {
+      router.back();
+    }
   };
 
   const handleDiscard = () => {
@@ -55,6 +111,20 @@ const EditProfileScreen: React.FC = () => {
     } else {
       router.back();
     }
+  };
+
+  const confirmSave = () => {
+    // Here you would typically send the updated data to your backend
+    console.log("Saving profile data:", profileData);
+    setIsUnsavedChanges(false);
+    setShowSaveDialog(false);
+    router.back();
+  };
+
+  const confirmDiscard = () => {
+    setIsUnsavedChanges(false);
+    setShowDiscardDialog(false);
+    router.back();
   };
 
   const pickImage = async () => {
@@ -70,6 +140,88 @@ const EditProfileScreen: React.FC = () => {
       setIsUnsavedChanges(true);
     }
   };
+
+  const renderAchievementSection = (title: string, achievements: string[]) => (
+    <List.Accordion title={title} style={styles.accordion}>
+      {achievements.map((achievement, index) => (
+        <TextInput
+          key={index}
+          style={styles.input}
+          value={achievement}
+          onChangeText={(text) => {
+            const newAchievements = [...achievements];
+            newAchievements[index] = text;
+            handleInputChange("achievements", {
+              ...profileData.achievements,
+              [title.toLowerCase()]: newAchievements,
+            });
+          }}
+        />
+      ))}
+      <Button
+        mode="outlined"
+        onPress={() => {
+          const newAchievements = [...achievements, ""];
+          handleInputChange("achievements", {
+            ...profileData.achievements,
+            [title.toLowerCase()]: newAchievements,
+          });
+        }}
+      >
+        Add {title} Achievement
+      </Button>
+    </List.Accordion>
+  );
+
+  const renderActivitySection = (
+    title: string,
+    activities: { title: string; role: string }[]
+  ) => (
+    <List.Accordion title={title} style={styles.accordion}>
+      {activities.map((activity, index) => (
+        <View key={index} style={styles.activityContainer}>
+          <TextInput
+            style={styles.input}
+            value={activity.title}
+            onChangeText={(text) => {
+              const newActivities = [...activities];
+              newActivities[index].title = text;
+              setActivities((prev) => ({
+                ...prev,
+                [title.toLowerCase()]: newActivities,
+              }));
+            }}
+            placeholder="Activity Title"
+          />
+          <TextInput
+            style={styles.input}
+            value={activity.role}
+            onChangeText={(text) => {
+              const newActivities = [...activities];
+              newActivities[index].role = text;
+              setActivities((prev) => ({
+                ...prev,
+                [title.toLowerCase()]: newActivities,
+              }));
+            }}
+            placeholder="Your Role"
+          />
+        </View>
+      ))}
+      <Button
+        mode="outlined"
+        onPress={() => {
+          const newActivities = [...activities, { title: "", role: "" }];
+          setActivities((prev) => ({
+            ...prev,
+            [title.toLowerCase()]: newActivities,
+          }));
+        }}
+      >
+        Add {title} Activity
+      </Button>
+    </List.Accordion>
+  );
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -89,19 +241,10 @@ const EditProfileScreen: React.FC = () => {
 
         <View style={styles.formContainer}>
           <Text style={styles.label}>Name</Text>
-          <TextInput
-            style={styles.input}
-            value={profileData.name}
-            onChangeText={(text) => handleInputChange("name", text)}
-          />
+          <Text style={styles.readOnlyText}>{profileData.name}</Text>
 
           <Text style={styles.label}>Email</Text>
-          <TextInput
-            style={styles.input}
-            value={profileData.email}
-            onChangeText={(text) => handleInputChange("email", text)}
-            keyboardType="email-address"
-          />
+          <Text style={styles.readOnlyText}>{profileData.email}</Text>
 
           <Text style={styles.label}>Phone</Text>
           <TextInput
@@ -112,19 +255,10 @@ const EditProfileScreen: React.FC = () => {
           />
 
           <Text style={styles.label}>Major</Text>
-          <TextInput
-            style={styles.input}
-            value={profileData.major}
-            onChangeText={(text) => handleInputChange("major", text)}
-          />
+          <Text style={styles.readOnlyText}>{profileData.major}</Text>
 
           <Text style={styles.label}>Graduation Year</Text>
-          <TextInput
-            style={styles.input}
-            value={profileData.graduationYear}
-            onChangeText={(text) => handleInputChange("graduationYear", text)}
-            keyboardType="numeric"
-          />
+          <Text style={styles.readOnlyText}>{profileData.graduationYear}</Text>
 
           <Text style={styles.label}>Bio</Text>
           <TextInput
@@ -134,6 +268,85 @@ const EditProfileScreen: React.FC = () => {
             multiline
             numberOfLines={4}
           />
+
+          <Text style={styles.sectionTitle}>Achievements</Text>
+          {renderAchievementSection(
+            "Leadership",
+            profileData.achievements.leadership
+          )}
+          {renderAchievementSection(
+            "Scholarship",
+            profileData.achievements.scholarship
+          )}
+          {renderAchievementSection(
+            "Citizenship",
+            profileData.achievements.citizenship
+          )}
+
+          <Text style={styles.sectionTitle}>Courses</Text>
+          <List.Accordion title="Current Courses" style={styles.accordion}>
+            {profileData.courses.current.map((course, index) => (
+              <TextInput
+                key={index}
+                style={styles.input}
+                value={course}
+                onChangeText={(text) => {
+                  const newCourses = [...profileData.courses.current];
+                  newCourses[index] = text;
+                  handleInputChange("courses", {
+                    ...profileData.courses,
+                    current: newCourses,
+                  });
+                }}
+              />
+            ))}
+            <Button
+              mode="outlined"
+              onPress={() => {
+                const newCourses = [...profileData.courses.current, ""];
+                handleInputChange("courses", {
+                  ...profileData.courses,
+                  current: newCourses,
+                });
+              }}
+            >
+              Add Current Course
+            </Button>
+          </List.Accordion>
+
+          <List.Accordion title="Completed Courses" style={styles.accordion}>
+            {profileData.courses.completed.map((course, index) => (
+              <TextInput
+                key={index}
+                style={styles.input}
+                value={course}
+                onChangeText={(text) => {
+                  const newCourses = [...profileData.courses.completed];
+                  newCourses[index] = text;
+                  handleInputChange("courses", {
+                    ...profileData.courses,
+                    completed: newCourses,
+                  });
+                }}
+              />
+            ))}
+            <Button
+              mode="outlined"
+              onPress={() => {
+                const newCourses = [...profileData.courses.completed, ""];
+                handleInputChange("courses", {
+                  ...profileData.courses,
+                  completed: newCourses,
+                });
+              }}
+            >
+              Add Completed Course
+            </Button>
+          </List.Accordion>
+
+          <Text style={styles.sectionTitle}>Activities</Text>
+          {renderActivitySection("Current", activities.current)}
+          {renderActivitySection("Past", activities.past)}
         </View>
       </ScrollView>
 
@@ -161,14 +374,21 @@ const EditProfileScreen: React.FC = () => {
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={() => setShowDiscardDialog(false)}>Cancel</Button>
-            <Button
-              onPress={() => {
-                setShowDiscardDialog(false);
-                router.back();
-              }}
-            >
-              Discard
-            </Button>
+            <Button onPress={confirmDiscard}>Discard</Button>
+          </Dialog.Actions>
+        </Dialog>
+
+        <Dialog
+          visible={showSaveDialog}
+          onDismiss={() => setShowSaveDialog(false)}
+        >
+          <Dialog.Title>Save Changes?</Dialog.Title>
+          <Dialog.Content>
+            <Text>Are you sure you want to save your changes?</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setShowSaveDialog(false)}>Cancel</Button>
+            <Button onPress={confirmSave}>Save</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -231,6 +451,25 @@ const styles = StyleSheet.create({
   },
   discardButton: {
     borderColor: "#8B5CF6",
+  },
+  readOnlyText: {
+    fontSize: 16,
+    color: "#4B5563",
+    marginBottom: 15,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 20,
+    marginBottom: 10,
+    color: "#1F2937",
+  },
+  accordion: {
+    backgroundColor: "#FFFFFF",
+    marginBottom: 10,
+  },
+  activityContainer: {
+    marginBottom: 15,
   },
 });
 
