@@ -1,16 +1,20 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { StyleSheet, SafeAreaView, ListRenderItem } from "react-native";
+import { StyleSheet, SafeAreaView, ListRenderItem, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { Appbar } from "react-native-paper";
-import NotificationList from "@/components/notifications/NotificationList";
-import NotificationFilters from "@/components/notifications/NotificationFilters";
-import NotificationItem, { Notification } from "@/components/notifications/NotificationItem";
+import NotificationItem, {
+  Notification,
+} from "@/components/notifications/NotificationItem";
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
- useAnimatedStyle, interpolate, Extrapolate } from "react-native-reanimated";
+  useAnimatedStyle,
+  withTiming,
+  Easing,
+} from "react-native-reanimated";
+import { router } from "expo-router";
 
 import Header from "@/components/home/header";
+import NotificationFilters from "@/components/notifications/NotificationFilters";
 
 const HEADER_HEIGHT = 100;
 const FILTERS_HEIGHT = 60;
@@ -91,10 +95,18 @@ const NotificationsScreen: React.FC = () => {
   const [notifications, setNotifications] =
     useState<Notification[]>(mockNotifications);
   const [activeFilter, setActiveFilter] = useState("All");
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const scrollY = useSharedValue(0);
   const lastScrollY = useSharedValue(0);
   const isScrollingDown = useSharedValue(false);
+
+  useEffect(() => {
+    const count = notifications.filter(
+      (notification) => !notification.read
+    ).length;
+    setUnreadCount(count);
+  }, [notifications]);
 
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (event) => {
@@ -106,25 +118,21 @@ const NotificationsScreen: React.FC = () => {
   });
 
   const headerStyle = useAnimatedStyle(() => {
-    const translateY = interpolate(
-      scrollY.value,
-      [0, HEADER_HEIGHT],
-      [0, -HEADER_HEIGHT],
-      Extrapolate.CLAMP
-    );
+    const translateY = withTiming(isScrollingDown.value ? -HEADER_HEIGHT : 0, {
+      duration: 300,
+      easing: Easing.inOut(Easing.ease),
+    });
 
     return {
-      transform: [{ translateY: isScrollingDown.value ? translateY : 0 }],
+      transform: [{ translateY }],
     };
   });
 
   const filtersStyle = useAnimatedStyle(() => {
-    const translateY = interpolate(
-      scrollY.value,
-      [0, HEADER_HEIGHT],
-      [HEADER_HEIGHT, 0],
-      Extrapolate.CLAMP
-    );
+    const translateY = withTiming(isScrollingDown.value ? 0 : HEADER_HEIGHT, {
+      duration: 300,
+      easing: Easing.inOut(Easing.ease),
+    });
 
     return {
       transform: [{ translateY }],
@@ -165,7 +173,7 @@ const NotificationsScreen: React.FC = () => {
         <Header
           temperature={25}
           profileImage="https://picsum.photos/100"
-          onProfilePress={() => {}}
+          onProfilePress={() => router.push("/profile")}
           scrollY={scrollY}
           isScrollingDown={isScrollingDown}
         />
@@ -174,6 +182,7 @@ const NotificationsScreen: React.FC = () => {
         <NotificationFilters
           activeFilter={activeFilter}
           onFilterChange={handleFilterChange}
+          unreadCount={unreadCount}
         />
       </Animated.View>
       <Animated.FlatList

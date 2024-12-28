@@ -1,23 +1,25 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { Button } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 
 interface NotificationFiltersProps {
   activeFilter: string;
   onFilterChange: (filter: string) => void;
+  unreadCount: number;
 }
 
 const NotificationFilters: React.FC<NotificationFiltersProps> = ({
   activeFilter,
   onFilterChange,
+  unreadCount,
 }) => {
   const { colors } = useTheme();
 
   const filters = ["All", "Unread", "Read"];
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={styles.container}>
       {filters.map((filter) => (
         <Button
           key={filter}
@@ -28,7 +30,7 @@ const NotificationFilters: React.FC<NotificationFiltersProps> = ({
             color: activeFilter === filter ? colors.background : colors.primary,
           }}
         >
-          {filter}
+          {filter === "Unread" ? `${filter} (${unreadCount})` : filter}
         </Button>
       ))}
     </View>
@@ -40,10 +42,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    height: 60,
+    paddingVertical: 8,
     paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(0, 0, 0, 0.1)",
   },
   filterButton: {
     minWidth: 80,
