@@ -16,7 +16,7 @@ export default function HelpCenterScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      <Header title="Help Center" showBackButton={false} />
+      <Header title="Help Center" showBackButton={true} />
       <ScrollView style={styles.scrollView}>
         <Searchbar
           placeholder="Search for help"

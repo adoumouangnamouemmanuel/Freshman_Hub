@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Linking } from "react-native";
+import Header from "@/components/common/Header";
 
 interface Service {
   title: string;
@@ -39,6 +40,7 @@ const CategoryTemplate: React.FC<CategoryTemplateProps> = ({
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+      <Header title={title} showBackButton={true} />
       {/* Removed header */}
       <ScrollView
         style={styles.scrollView}

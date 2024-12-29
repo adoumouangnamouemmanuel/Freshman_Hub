@@ -15,6 +15,7 @@ import Animated, {
   interpolate,
   Extrapolate,
 } from "react-native-reanimated";
+import { router } from "expo-router";
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
@@ -54,6 +55,10 @@ const Header: React.FC<HeaderProps> = ({
     };
   });
 
+  const onPressHelp = () => {
+    router.push("/(routes)/help");
+  }
+
   return (
     <AnimatedBlurView
       intensity={50}
@@ -73,7 +78,7 @@ const Header: React.FC<HeaderProps> = ({
           <TouchableOpacity style={styles.iconButton}>
             <Ionicons name="add" size={24} color="#666" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}>
+          <TouchableOpacity style={styles.iconButton} onPress={onPressHelp}>
             <Ionicons name="help-circle-outline" size={24} color="#666" />
           </TouchableOpacity>
         </View>
@@ -124,7 +129,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   iconButton: {
-    padding: 4,
+    padding: 8,
+    backgroundColor: "#f0f2f5",
+    borderRadius: "50%",
   },
 });
 

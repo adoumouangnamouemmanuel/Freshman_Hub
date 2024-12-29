@@ -92,7 +92,7 @@ const CoachingScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top"]}>
-      <Header title="Coaching" showBackButton={false} />
+      <Header title="Coaching" showBackButton={true} />
       <LinearGradient
         colors={["#4c669f", "#3b5998", "#192f6a"]}
         style={styles.container}
