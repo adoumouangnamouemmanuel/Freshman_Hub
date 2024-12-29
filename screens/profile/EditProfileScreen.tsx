@@ -240,11 +240,14 @@ const EditProfileScreen: React.FC = () => {
         </View>
 
         <View style={styles.formContainer}>
-          <Text style={styles.label}>Name</Text>
-          <Text style={styles.readOnlyText}>{profileData.name}</Text>
-
-          <Text style={styles.label}>Email</Text>
-          <Text style={styles.readOnlyText}>{profileData.email}</Text>
+          <View style={styles.aboutContent}>
+            <Text style={styles.label}>Name:</Text>
+            <Text style={styles.readOnlyText}>{profileData.name}</Text>
+          </View>
+          <View style={styles.aboutContent}>
+            <Text style={styles.label}>Email: </Text>
+            <Text style={styles.readOnlyText}>{profileData.email}</Text>
+          </View>
 
           <Text style={styles.label}>Phone</Text>
           <TextInput
@@ -254,11 +257,16 @@ const EditProfileScreen: React.FC = () => {
             keyboardType="phone-pad"
           />
 
-          <Text style={styles.label}>Major</Text>
-          <Text style={styles.readOnlyText}>{profileData.major}</Text>
-
-          <Text style={styles.label}>Graduation Year</Text>
-          <Text style={styles.readOnlyText}>{profileData.graduationYear}</Text>
+          <View style={styles.aboutContent}>
+            <Text style={styles.label}>Major: </Text>
+            <Text style={styles.readOnlyText}>{profileData.major}</Text>
+          </View>
+          <View style={styles.aboutContent}>
+            <Text style={styles.label}>Graduation Year: </Text>
+            <Text style={styles.readOnlyText}>
+              {profileData.graduationYear}
+            </Text>
+          </View>
 
           <Text style={styles.label}>Bio</Text>
           <TextInput
@@ -422,6 +430,20 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     paddingHorizontal: 20,
+  },
+  aboutContent: {
+    backgroundColor: '#eee',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    }
   },
   label: {
     fontSize: 16,

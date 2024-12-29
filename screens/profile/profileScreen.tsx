@@ -44,19 +44,19 @@ const ProfileScreen: React.FC = () => {
   });
 
   const [gpa, setGPA] = useState("3.8");
-  const [isGPAPrivate, setIsGPAPrivate] = useState(false);
+  const [isGPAPrivate, setIsGPAPrivate] = useState(true);
 
-  const updateGPA = (newGPA: string) => {
-    setGPA(newGPA);
-  };
+  // const updateGPA = (newGPA: string) => {
+  //   setGPA(newGPA);
+  // };
 
   const toggleGPAPrivacy = () => {
     setIsGPAPrivate(!isGPAPrivate);
   };
 
-  const updatePersonalInfo = (updatedInfo: any) => {
-    setPersonalInfo(updatedInfo);
-  };
+  // const updatePersonalInfo = (updatedInfo: any) => {
+  //   setPersonalInfo(updatedInfo);
+  // };
 
   const togglePersonalInfoPrivacy = (key: string) => {
     setPersonalInfo((prevInfo) => ({
@@ -76,17 +76,17 @@ const ProfileScreen: React.FC = () => {
     tabIndicatorPosition.value = withSpring(index * (width / 4));
   };
 
-  const renderAchievementSection = (title: string, achievements: string[]) => (
-    <View style={styles.achievementSection}>
-      <Text style={styles.achievementSectionTitle}>{title}</Text>
-      {achievements.map((achievement, index) => (
-        <View key={index} style={styles.achievementItem}>
-          <Ionicons name="checkmark-circle" size={24} color="#8B5CF6" />
-          <Text style={styles.achievementText}>{achievement}</Text>
-        </View>
-      ))}
-    </View>
-  );
+  // const renderAchievementSection = (title: string, achievements: string[]) => (
+  //   <View style={styles.achievementSection}>
+  //     <Text style={styles.achievementSectionTitle}>{title}</Text>
+  //     {achievements.map((achievement, index) => (
+  //       <View key={index} style={styles.achievementItem}>
+  //         <Ionicons name="checkmark-circle" size={24} color="#8B5CF6" />
+  //         <Text style={styles.achievementText}>{achievement}</Text>
+  //       </View>
+  //     ))}
+  //   </View>
+  // );
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -294,6 +294,10 @@ const ProfileScreen: React.FC = () => {
                 "Discrete Mathematics",
                 "Calculus I",
                 "Written and Oral Communication",
+                "Introduction to Engineering",
+                "Introduction to Design Thinking",
+                "Electronics and Circuits",
+                "Introduction to Computer Programming",
               ]}
               iconName="checkmark-circle-outline"
               iconColor="#10B981"

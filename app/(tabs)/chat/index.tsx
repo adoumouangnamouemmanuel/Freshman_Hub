@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Appbar, Searchbar } from "react-native-paper";
+import { Searchbar } from "react-native-paper";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ChatListItem from "@/components/chat/ChatListItem";
 import CommunityChat from "@/components/chat/CommunityChat";
 import CustomBottomNavigation from "@/components/CustomBottomNavigation";
+import Header from "@/components/common/Header";
 
 const ChatScreen = () => {
   const [index, setIndex] = useState(0);
@@ -62,9 +63,10 @@ const ChatScreen = () => {
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
-      <Appbar.Header>
+      <Header title="Chats"showBackButton={true} />
+      {/* <Appbar.Header>
         <Appbar.Content title="Chats" />
-      </Appbar.Header>
+      </Appbar.Header> */}
       <Searchbar
         placeholder="Search chats"
         onChangeText={setSearchQuery}
@@ -75,7 +77,9 @@ const ChatScreen = () => {
       <CustomBottomNavigation
         state={{ index, routes }}
         navigation={{
-          emit: (event: { type: string; target?: string }) => ({ defaultPrevented: false }),
+          emit: (event: { type: string; target?: string }) => ({
+            defaultPrevented: false,
+          }),
           navigate: (name: string) => {
             const routeIndex = routes.findIndex((route) => route.key === name);
             setIndex(routeIndex);

@@ -1,18 +1,12 @@
 import React, { useState } from "react";
 import { View, StyleSheet, FlatList } from "react-native";
-import {
-  Appbar,
-  TextInput,
-  IconButton,
-  Avatar,
-  Text,
-} from "react-native-paper";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { Appbar, TextInput, IconButton, Text } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const PrivateChatScreen = () => {
-  const navigation = useNavigation();
-  const route = useRoute();
-  // const { chatId } = route.params;
+  const router = useRouter();
+  const { id } = useLocalSearchParams();
   const [message, setMessage] = useState("");
 
   // Mock data for messages
@@ -31,7 +25,6 @@ const PrivateChatScreen = () => {
   const sendMessage = () => {
     if (message.trim()) {
       setMessages([
-        ...messages,
         {
           id: Date.now().toString(),
           text: message,
@@ -41,12 +34,17 @@ const PrivateChatScreen = () => {
             minute: "2-digit",
           }),
         },
+        ...messages,
       ]);
       setMessage("");
     }
   };
 
-  const renderMessage = ({ item }: { item: { id: string; text: string; sender: string; timestamp: string } }) => (
+  const renderMessage = ({
+    item,
+  }: {
+    item: { id: string; text: string; sender: string; timestamp: string };
+  }) => (
     <View
       style={[
         styles.messageBubble,
@@ -59,9 +57,9 @@ const PrivateChatScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <Appbar.Header>
-        <Appbar.BackAction onPress={() => navigation.goBack()} />
+        <Appbar.BackAction onPress={() => router.back()} />
         <Appbar.Content title="John Doe" />
         <Appbar.Action icon="phone" onPress={() => {}} />
         <Appbar.Action icon="video" onPress={() => {}} />
@@ -89,7 +87,7 @@ const PrivateChatScreen = () => {
           disabled={!message.trim()}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

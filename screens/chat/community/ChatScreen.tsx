@@ -14,6 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 import ChatListItem from "@/components/chat/ChatListItem";
 import CommunityChat from "@/components/chat/CommunityChat";
 import { router } from "expo-router";
+import Header from "@/components/common/Header";
 
 const ChatScreen = () => {
   const [index, setIndex] = useState(0);
@@ -75,6 +76,7 @@ const ChatScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Header title="Chats" showBackButton={true} />
       <Searchbar
         placeholder="Search chats"
         onChangeText={setSearchQuery}
